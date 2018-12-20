@@ -7,11 +7,12 @@ using model;
 using AutoMapper;
 using DTO;
 using Microsoft.EntityFrameworkCore;
-using DAL;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using DAO;
+using DAL;
 
 namespace api.Controllers
 {
@@ -20,18 +21,18 @@ namespace api.Controllers
     [ApiController]
     public class CarpoolingsController : ControllerBase
     {
-        private readonly DataAccess dal;
+        private readonly Dao dao;
         private readonly IMapper mapper;
 
         public CarpoolingsController(IMapper mapper, DataAccess dal)
         {
             this.mapper = mapper;
-            this.dal = dal;
+            this.dao = dal;
         }
         // GET api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CarpoolingDTO>>> Get() {
-            IEnumerable<Carpooling> carpoolings = await dal.GetCarpoolings();
+        public async Task<ActionResult<IEnumerable<CarpoolingDTO>>> Get(int pageSize = 10, int pageIndex = 0, string filterFrom = null) {
+            IEnumerable<Carpooling> carpoolings = await dao.GetCarpoolings(pageSize, pageIndex, filterFrom);
             IEnumerable<CarpoolingDTO> carpoolingsDTO = carpoolings.Select(mapper.Map<CarpoolingDTO>);
             return Ok(carpoolingsDTO);
         }
@@ -40,7 +41,7 @@ namespace api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CarpoolingDTO>> Get(int id)
         {
-            Carpooling carpooling = await dal.GetCarpooling(id);
+            Carpooling carpooling = await dao.GetCarpooling(id);
             return Ok(mapper.Map<CarpoolingDTO>(carpooling));
         }
 
@@ -48,7 +49,7 @@ namespace api.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] CarpoolingDTO carpoolingDTO)
         {
-            Carpooling carpooling = dal.AddCarpooling(mapper.Map<Carpooling>(carpoolingDTO));
+            Carpooling carpooling = dao.AddCarpooling(mapper.Map<Carpooling>(carpoolingDTO));
             return Created("api/Users/"+carpooling.Id, mapper.Map<CarpoolingDTO>(carpooling));
         }
 
@@ -56,7 +57,7 @@ namespace api.Controllers
         [HttpPut("{id}")]
         public ActionResult<UserDTO> Put(int id, [FromBody] CarpoolingDTO carpoolingDTO)
         {
-            Carpooling carpooling = dal.SetCarpooling(mapper.Map<Carpooling>(carpoolingDTO));
+            Carpooling carpooling = dao.SetCarpooling(mapper.Map<Carpooling>(carpoolingDTO));
             return Ok(mapper.Map<CarpoolingDTO>(carpooling));
         }
 
@@ -64,7 +65,7 @@ namespace api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await dal.RemoveCarpooling(id);
+            await dao.RemoveCarpooling(id);
             return Ok();
         }
     }

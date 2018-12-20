@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using model;
+using DAO;
 
 namespace DAL
 {
-    public class DataAccess
+    public class DataAccess : Dao
     {
         private readonly smartCityContext context;
         public DataAccess(smartCityContext context) {
@@ -67,9 +68,10 @@ namespace DAL
         #endregion
 
         #region Carpooling
-        public async Task<IEnumerable<Carpooling>> GetCarpoolings(int pageSize = 10, int pageIndex = 0) => 
+        public async Task<IEnumerable<Carpooling>> GetCarpoolings(int pageSize, int pageIndex, string filter) => 
         await context.Carpooling.Skip(pageSize * pageIndex)
                                 .Take(pageSize)
+                                .Where(c => filter == null || c.LocalityFrom.Contains(filter))
                                 .ToListAsync();
 
         public async Task<Carpooling> GetCarpooling(int id) =>

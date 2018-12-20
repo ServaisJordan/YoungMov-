@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\model\model.csproj" />
+    <ProjectReference Include="..\DAO\DAO.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,11 +7,12 @@ using model;
 using AutoMapper;
 using DTO;
 using Microsoft.EntityFrameworkCore;
-using DAL;
+using DAO;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using DAL;
 
 namespace api.Controllers
 {
@@ -20,18 +21,18 @@ namespace api.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly DataAccess dal;
+        private readonly Dao dao;
         private readonly IMapper mapper;
 
         public UsersController(IMapper mapper, DataAccess dal)
         {
             this.mapper = mapper;
-            this.dal = dal;
+            this.dao = dal;
         }
         // GET api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDTO>>> Get(int pageSize = 10, int pageIndex = 0, string filter = null) {
-            IEnumerable<User> users = await dal.GetUsers(pageSize, pageIndex, filter);
+            IEnumerable<User> users = await dao.GetUsers(pageSize, pageIndex, filter);
             IEnumerable<UserDTO> usersDTO = users.Select(mapper.Map<UserDTO>);
             return Ok(usersDTO);
         }
@@ -40,7 +41,7 @@ namespace api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDTO>> Get(int id)
         {
-            User user = (User) await dal.GetUser(id);
+            User user = (User) await dao.GetUser(id);
             return Ok(mapper.Map<UserDTO>(user));
         }
 
@@ -48,7 +49,7 @@ namespace api.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] UserDTO userDTO)
         {
-            User user = dal.AddUser(mapper.Map<User>(userDTO));
+            User user = dao.AddUser(mapper.Map<User>(userDTO));
             return Created("api/Users/"+user.Id, mapper.Map<UserDTO>(user));
         }
 
@@ -56,7 +57,7 @@ namespace api.Controllers
         [HttpPut("{id}")]
         public ActionResult<UserDTO> Put(int id, [FromBody] UserDTO userDTO)
         {
-            User user = dal.SetUser(mapper.Map<User>(userDTO));
+            User user = dao.SetUser(mapper.Map<User>(userDTO));
             return Ok(mapper.Map<UserDTO>(user));
         }
 
@@ -64,7 +65,7 @@ namespace api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await dal.RemoveUser(id);
+            await dao.RemoveUser(id);
             return Ok();
         }
     }

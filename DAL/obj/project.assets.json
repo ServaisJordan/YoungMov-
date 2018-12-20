@@ -934,6 +934,19 @@
           "ref/netstandard1.3/System.Threading.Tasks.dll": {}
         }
       },
+      "DAO/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v2.1",
+        "dependencies": {
+          "model": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/DAO.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/DAO.dll": {}
+        }
+      },
       "model/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v2.1",
@@ -3520,6 +3533,11 @@
         "system.threading.tasks.nuspec"
       ]
     },
+    "DAO/1.0.0": {
+      "type": "project",
+      "path": "../DAO/DAO.csproj",
+      "msbuildProject": "../DAO/DAO.csproj"
+    },
     "model/1.0.0": {
       "type": "project",
       "path": "../model/model.csproj",
@@ -3528,6 +3546,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.1": [
+      "DAO >= 1.0.0",
       "Microsoft.EntityFrameworkCore >= 2.1.4",
       "Microsoft.NETCore.App >= 2.1.0",
       "model >= 1.0.0"
@@ -3561,6 +3580,9 @@
       "frameworks": {
         "netcoreapp2.1": {
           "projectReferences": {
+            "C:\\Users\\HP\\Desktop\\apiSmartCity\\DAO\\DAO.csproj": {
+              "projectPath": "C:\\Users\\HP\\Desktop\\apiSmartCity\\DAO\\DAO.csproj"
+            },
             "C:\\Users\\HP\\Desktop\\apiSmartCity\\model\\model.csproj": {
               "projectPath": "C:\\Users\\HP\\Desktop\\apiSmartCity\\model\\model.csproj"
             }

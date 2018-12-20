@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v2.1": {
       "DAL/1.0.0": {
         "dependencies": {
+          "DAO": "1.0.0",
           "Microsoft.EntityFrameworkCore": "2.1.4",
           "model": "1.0.0"
         },
@@ -520,6 +521,14 @@
           "System.Runtime": "4.1.0"
         }
       },
+      "DAO/1.0.0": {
+        "dependencies": {
+          "model": "1.0.0"
+        },
+        "runtime": {
+          "DAO.dll": {}
+        }
+      },
       "model/1.0.0": {
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "2.1.4",
@@ -922,6 +931,11 @@
       "sha512": "sha512-k1S4Gc6IGwtHGT8188RSeGaX86Qw/wnrgNLshJvsdNUOPP9etMmo8S07c+UlOAx4K/xLuN9ivA1bD0LVurtIxQ==",
       "path": "system.threading.tasks/4.0.11",
       "hashPath": "system.threading.tasks.4.0.11.nupkg.sha512"
+    },
+    "DAO/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     },
     "model/1.0.0": {
       "type": "project",

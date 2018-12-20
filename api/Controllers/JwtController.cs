@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using DTO;
 using model;
+using DAO;
 using DAL;
 
 namespace api.Controllers
@@ -21,19 +20,19 @@ namespace api.Controllers
     [ApiController]
     public class JwtController : ControllerBase
     {
-        private readonly DataAccess dal;
+        private readonly Dao dao;
         private readonly JwtIssuerOptions _jwtOptions;
         public JwtController(IOptions<JwtIssuerOptions> jwtOptions, DataAccess dal)
         {
             _jwtOptions=jwtOptions.Value;
-            this.dal = dal;
+            this.dao = dal;
         }
 
         // POST api/Jwt
         [HttpPost]
         public async Task<ActionResult> Login([FromBody] LoginModel loginModel)
         {
-            User userFound = await dal.GetUser(loginModel.UserName, loginModel.Password);
+            User userFound = await dao.GetUser(loginModel.UserName, loginModel.Password);
             if (userFound == null)
                 return Unauthorized();
 
