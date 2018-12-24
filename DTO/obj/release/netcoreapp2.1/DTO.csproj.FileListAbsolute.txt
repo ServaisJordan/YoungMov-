@@ -1,0 +1,9 @@
+C:\Users\HP\Desktop\apiSmartCity\DTO\bin\release\netcoreapp2.1\DTO.deps.json
+C:\Users\HP\Desktop\apiSmartCity\DTO\bin\release\netcoreapp2.1\DTO.dll
+C:\Users\HP\Desktop\apiSmartCity\DTO\bin\release\netcoreapp2.1\DTO.pdb
+C:\Users\HP\Desktop\apiSmartCity\DTO\obj\release\netcoreapp2.1\DTO.csprojAssemblyReference.cache
+C:\Users\HP\Desktop\apiSmartCity\DTO\obj\release\netcoreapp2.1\DTO.csproj.CoreCompileInputs.cache
+C:\Users\HP\Desktop\apiSmartCity\DTO\obj\release\netcoreapp2.1\DTO.AssemblyInfoInputs.cache
+C:\Users\HP\Desktop\apiSmartCity\DTO\obj\release\netcoreapp2.1\DTO.AssemblyInfo.cs
+C:\Users\HP\Desktop\apiSmartCity\DTO\obj\release\netcoreapp2.1\DTO.dll
+C:\Users\HP\Desktop\apiSmartCity\DTO\obj\release\netcoreapp2.1\DTO.pdb

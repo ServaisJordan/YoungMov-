@@ -1,0 +1,11 @@
+C:\Users\HP\Desktop\apiSmartCity\model\bin\release\netcoreapp2.1\model.deps.json
+C:\Users\HP\Desktop\apiSmartCity\model\bin\release\netcoreapp2.1\model.runtimeconfig.json
+C:\Users\HP\Desktop\apiSmartCity\model\bin\release\netcoreapp2.1\model.runtimeconfig.dev.json
+C:\Users\HP\Desktop\apiSmartCity\model\bin\release\netcoreapp2.1\model.dll
+C:\Users\HP\Desktop\apiSmartCity\model\bin\release\netcoreapp2.1\model.pdb
+C:\Users\HP\Desktop\apiSmartCity\model\obj\release\netcoreapp2.1\model.csprojAssemblyReference.cache
+C:\Users\HP\Desktop\apiSmartCity\model\obj\release\netcoreapp2.1\model.csproj.CoreCompileInputs.cache
+C:\Users\HP\Desktop\apiSmartCity\model\obj\release\netcoreapp2.1\model.AssemblyInfoInputs.cache
+C:\Users\HP\Desktop\apiSmartCity\model\obj\release\netcoreapp2.1\model.AssemblyInfo.cs
+C:\Users\HP\Desktop\apiSmartCity\model\obj\release\netcoreapp2.1\model.dll
+C:\Users\HP\Desktop\apiSmartCity\model\obj\release\netcoreapp2.1\model.pdb
