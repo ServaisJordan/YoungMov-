@@ -45,9 +45,14 @@ namespace api.Controllers
             return Ok(mapper.Map<UserDTO>(user));
         }
 
+        public async Task<ActionResult<UserDTO>> Get(string userName) {
+            User user = (User) await dao.GetUser(userName);
+            return Ok(mapper.Map<UserDTO>(user));
+        }
+
         // POST api/Users
         [HttpPost]
-        public IActionResult Post([FromBody] UserDTO userDTO)
+        public IActionResult Post([FromBody] UserDTORegistration userDTO)
         {
             User user = dao.AddUser(mapper.Map<User>(userDTO));
             return Created("api/Users/"+user.Id, mapper.Map<UserDTO>(user));

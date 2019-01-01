@@ -13,6 +13,7 @@ using System.Text;
 using DAL;
 using Swashbuckle.AspNetCore.Swagger;
 using api.Infrastructure;
+using Microsoft.AspNetCore.Cors;
 
 namespace api
 {
@@ -32,8 +33,9 @@ namespace api
             services.AddTransient<DataAccess>();
             AutoMapper.Mapper.Initialize(config => config.AddProfile<Infrastructure.MappingProfile>());
             services.AddAutoMapper();
+            services.AddCors();
 
-            string SecretKey = Configuration.GetValue<string>("SecretKey");
+            string SecretKey = "theSuperSecretKey";
             SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
             services.Configure<JwtIssuerOptions>(options =>
         {
@@ -77,7 +79,7 @@ namespace api
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+                c.SwaggerDoc("v1", new Info { Title = "YoungMovAPi", Version = "v1" });
             });
             
             services.AddMvc(options =>
@@ -91,7 +93,7 @@ namespace api
         {
             if (env.IsDevelopment())
             {
-                //app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage();
             }
             else
             {
@@ -99,6 +101,9 @@ namespace api
             }
 
             app.UseSwagger();
+            app.UseCors(builder =>{ builder.AllowAnyOrigin()
+                                        .AllowAnyHeader()
+                                        .AllowAnyMethod();});
 
             app.UseSwaggerUI(c =>
             {

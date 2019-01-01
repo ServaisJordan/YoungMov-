@@ -23,8 +23,8 @@ create table [User] (
 	identityPiece_validated_at datetime,
 	phone varchar(250),
 	trusted_carpooling_driver_code varchar(250),
-	created_at datetime not null constraint User_Date_creation default getDate(),
-	updated_at datetime,
+	created_at datetime constraint User_Date_creation default getDate(),
+	updated_at datetime CONSTRAINT User_Date_modification default getDate(),
 	locality varchar(250) not null,
 	postalCode varchar(250) not null,
 	timestamp);
@@ -55,8 +55,8 @@ create table carpooling (
 	[description] varchar(250),
 	nb_places int not null,
 	place_price smallmoney not null,
-	created_at datetime not null constraint carpooling_Date_creation default getDate(),
-	updated_at datetime,
+	created_at datetime constraint carpooling_Date_creation default getDate(),
+	updated_at datetime constraint carpooling_Date_modification default getDate(),
 	destination_from varchar(250) not null,
 	destination_to varchar(250) not null,
 	locality_from varchar(250) not null,
@@ -140,3 +140,12 @@ insert into dbo.[User] ([role], [password], userName, email, gender, locality, p
 insert into carpooling_applicant (carpooling, [User], has_been_accepted) values (
 	1, 2, 1
 );
+
+insert into dbo.[User] ([role], [password], userName, email, gender, locality, postalCode) values(
+	'backoffice',
+	'1234567',
+	'Daniellyson',
+	'Daniellyson@hotmail.be',
+	'm',
+	'inconnu',
+	'0000');

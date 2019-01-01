@@ -24,12 +24,19 @@ namespace DAL
         }
 
         public async Task<User> GetUser(int id) {
-            return await context.User.Include(user => user.Carpooling)
-                                    .Include(user => user.PrivateMessage).ThenInclude(p => p.ReponseNavigation)
-                                    .Include(user => user.Car)
-                                    .FirstOrDefaultAsync(u => u.Id == id);
+            return await IncludeQuery().FirstOrDefaultAsync(u => u.Id == id);
         }
 
+        public async Task<User> GetUser(string userName) {
+            return await IncludeQuery().FirstOrDefaultAsync(u => u.UserName == userName);
+        }
+
+        public Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<User, ICollection<Car>> IncludeQuery() {
+            return context.User.Include(user => user.Carpooling)
+                                    .Include(user => user.PrivateMessage)
+                                    .ThenInclude(p => p.ReponseNavigation)
+                                    .Include(user => user.Car);
+        } 
 
         public async Task<User> GetUser(string userName, string password) {
             return await context.User.Select(u => new User() {
@@ -38,6 +45,7 @@ namespace DAL
                 Role = u.Role
             }).FirstOrDefaultAsync(user => user.UserName == userName && user.Password == password);
         }
+
 
         public User AddUser(User user) {
             context.User.Add(user);

@@ -31,7 +31,7 @@ namespace model
         public DateTime? IdentityPieceValidatedAt { get; set; }
         public string Phone { get; set; }
         public string TrustedCarpoolingDriverCode { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string Locality { get; set; }
         public string PostalCode { get; set; }
