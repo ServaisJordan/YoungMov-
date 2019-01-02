@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using DTO;
 using DAL;
-using DAO;
 
 namespace api.Controllers
 {

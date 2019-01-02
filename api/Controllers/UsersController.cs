@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using model;
 using AutoMapper;
 using DTO;
-using Microsoft.EntityFrameworkCore;
 using DAO;
-using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
 using DAL;
 
 namespace api.Controllers
@@ -31,8 +27,8 @@ namespace api.Controllers
         }
         // GET api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> Get(int pageSize = 10, int pageIndex = 0, string filter = null) {
-            IEnumerable<User> users = await dao.GetUsers(pageSize, pageIndex, filter);
+        public async Task<ActionResult<IEnumerable<UserDTO>>> Get(int pageSize = 10, int pageIndex = 0, string userNameFilter = null) {
+            IEnumerable<User> users = await dao.GetUsers(pageSize, pageIndex, userNameFilter);
             IEnumerable<UserDTO> usersDTO = users.Select(mapper.Map<UserDTO>);
             return Ok(usersDTO);
         }
@@ -45,6 +41,8 @@ namespace api.Controllers
             return Ok(mapper.Map<UserDTO>(user));
         }
 
+
+        [HttpGet("{userName}")]
         public async Task<ActionResult<UserDTO>> Get(string userName) {
             User user = (User) await dao.GetUser(userName);
             return Ok(mapper.Map<UserDTO>(user));
@@ -60,9 +58,10 @@ namespace api.Controllers
 
         // PUT api/Users/5
         [HttpPut("{id}")]
-        public ActionResult<UserDTO> Put(int id, [FromBody] UserDTO userDTO)
+        public async Task<ActionResult<UserDTO>> Put(int id, [FromBody] UserDTO userDTO)
         {
-            User user = dao.SetUser(mapper.Map<User>(userDTO));
+            User userModel = await dao.GetUser(id);
+            User user = dao.SetUser(mapper.Map(userDTO, userModel));
             return Ok(mapper.Map<UserDTO>(user));
         }
 

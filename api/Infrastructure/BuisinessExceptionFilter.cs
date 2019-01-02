@@ -28,7 +28,7 @@ namespace api.Infrastructure
                
                 var result = new ContentResult()
                 {
-                    StatusCode = (int)HttpStatusCode.Conflict,
+                    StatusCode = (int) HttpStatusCode.Conflict,
                     //Content = Newtonsoft.Json.JsonConvert.SerializeObject(new BusinessError() { Message = context.Exception.Message }),
                     ContentType = "application/json"
 

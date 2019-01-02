@@ -11,7 +11,7 @@ namespace DAO
         Task<IEnumerable<User>> GetUsers(int pageSize, int pageIndex, string filter);
         Task<User> GetUser(int id);
         Task<User> GetUser(string userName);
-        Task<User> GetUser(string userName, string password);
+        Task<User> GetUser(string userName, string password, string role);
         User AddUser(User user);
         User SetUser(User user);
         Task RemoveUser(int id);
@@ -23,6 +23,10 @@ namespace DAO
         Carpooling AddCarpooling(Carpooling carpooling);
         Carpooling SetCarpooling(Carpooling carpooling);
         Task RemoveCarpooling(int id);
+        #endregion
+
+        #region NumberOfUsers
+        Task<int> GetNumberOfUsers(DateTime ?date, char ?genrder);
         #endregion
     }
 }

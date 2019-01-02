@@ -32,7 +32,7 @@ namespace api.Controllers
         [HttpPost]
         public async Task<ActionResult> Login([FromBody] LoginModel loginModel)
         {
-            User userFound = await dao.GetUser(loginModel.UserName, loginModel.Password);
+            User userFound = await dao.GetUser(loginModel.UserName, loginModel.Password, loginModel.Role);
             if (userFound == null)
                 return Unauthorized();
 

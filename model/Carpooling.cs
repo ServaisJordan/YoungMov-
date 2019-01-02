@@ -14,7 +14,7 @@ namespace model
         public string Description { get; set; }
         public int NbPlaces { get; set; }
         public decimal PlacePrice { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string DestinationFrom { get; set; }
         public string DestinationTo { get; set; }

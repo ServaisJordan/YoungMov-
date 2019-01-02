@@ -1,17 +1,16 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using model;
 
 namespace model
 {
-    public partial class smartCityContext : DbContext
+    public partial class YoungMovContext : DbContext
     {
-        public smartCityContext()
+        public YoungMovContext()
         {
         }
 
-        public smartCityContext(DbContextOptions<smartCityContext> options)
+        public YoungMovContext(DbContextOptions<YoungMovContext> options)
             : base(options)
         {
         }
@@ -27,7 +26,7 @@ namespace model
         {
             if (!optionsBuilder.IsConfigured)
             {
-                throw new Exception("use the constructor with dbcontext argument !!");
+                throw new Exception("use the constructor with dbcontextoption argument");
             }
         }
 
@@ -38,7 +37,11 @@ namespace model
                 entity.ToTable("car");
 
                 entity.HasIndex(e => e.LicensePlateNumber)
-                    .HasName("UQ__car__41B4436DAC8576B4")
+                    .HasName("UQ__car__41B4436D4ACE34BA")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.PhotoFileName)
+                    .HasName("UQ__car__22F493643FEF8F69")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -57,7 +60,8 @@ namespace model
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
-                    .HasColumnType("datetime");
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.LicensePlateNumber)
                     .IsRequired()
@@ -67,6 +71,21 @@ namespace model
 
                 entity.Property(e => e.Owner).HasColumnName("owner");
 
+                entity.Property(e => e.PhotoFileName)
+                    .IsRequired()
+                    .HasColumnName("photo_file_name")
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PhotoSentAt)
+                    .HasColumnName("photo_sent_at")
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PhotoValidatedAt)
+                    .HasColumnName("photo_validated_at")
+                    .HasColumnType("datetime");
+
                 entity.Property(e => e.ValidatedAt)
                     .HasColumnName("validated_at")
                     .HasColumnType("datetime");
@@ -75,7 +94,7 @@ namespace model
                     .WithMany(p => p.Car)
                     .HasForeignKey(d => d.Owner)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__car__owner__414EAC47");
+                    .HasConstraintName("FK__car__owner__793DFFAF");
             });
 
             modelBuilder.Entity<Carpooling>(entity =>
@@ -88,7 +107,8 @@ namespace model
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
-                    .HasColumnType("datetime");
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Creator).HasColumnName("creator");
 
@@ -146,26 +166,28 @@ namespace model
 
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnName("updated_at")
-                    .HasColumnType("datetime");
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.HasOne(d => d.CarNavigation)
                     .WithMany(p => p.Carpooling)
                     .HasForeignKey(d => d.Car)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__carpooling__car__451F3D2B");
+                    .HasConstraintName("FK__carpooling__car__7E02B4CC");
 
                 entity.HasOne(d => d.CreatorNavigation)
                     .WithMany(p => p.Carpooling)
                     .HasForeignKey(d => d.Creator)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__carpoolin__creat__46136164");
+                    .HasConstraintName("FK__carpoolin__creat__7EF6D905");
             });
+            modelBuilder.Entity<Carpooling>().HasMany(c => c.CarpoolingApplicant).WithOne(cA => cA.CarpoolingNavigation).HasForeignKey(cA => cA.Carpooling).OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<CarpoolingApplicant>(entity =>
             {
-                entity.HasKey(e => new { e.Carpooling, e.User });
-
                 entity.ToTable("carpooling_applicant");
+
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Carpooling).HasColumnName("carpooling");
 
@@ -175,14 +197,16 @@ namespace model
                     .WithMany(p => p.CarpoolingApplicant)
                     .HasForeignKey(d => d.Carpooling)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__carpoolin__carpo__48EFCE0F");
+                    .HasConstraintName("FK__carpoolin__carpo__01D345B0");
 
                 entity.HasOne(d => d.UserNavigation)
                     .WithMany(p => p.CarpoolingApplicant)
                     .HasForeignKey(d => d.User)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__carpooling__User__49E3F248");
+                    .HasConstraintName("FK__carpooling__User__02C769E9");
             });
+
+            modelBuilder.Entity<CarpoolingApplicant>().HasOne(cA => cA.CarpoolingNavigation).WithMany(c => c.CarpoolingApplicant).OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<PrivateMessage>(entity =>
             {
@@ -198,7 +222,8 @@ namespace model
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
-                    .HasColumnType("datetime");
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Creator).HasColumnName("creator");
 
@@ -210,12 +235,12 @@ namespace model
                     .WithMany(p => p.PrivateMessage)
                     .HasForeignKey(d => d.Creator)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__private_m__creat__4DB4832C");
+                    .HasConstraintName("FK__private_m__creat__0697FACD");
 
                 entity.HasOne(d => d.ReponseNavigation)
                     .WithMany(p => p.InverseReponseNavigation)
                     .HasForeignKey(d => d.Reponse)
-                    .HasConstraintName("FK__private_m__repon__4EA8A765");
+                    .HasConstraintName("FK__private_m__repon__078C1F06");
             });
 
             modelBuilder.Entity<TrustedCarpoolingDriver>(entity =>
@@ -230,7 +255,8 @@ namespace model
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
-                    .HasColumnType("datetime");
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Timestamp)
                     .IsRequired()
@@ -241,39 +267,23 @@ namespace model
                     .WithMany(p => p.TrustedCarpoolingDriverCarpoolerNavigation)
                     .HasForeignKey(d => d.Carpooler)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__trusted_c__carpo__3B95D2F1");
+                    .HasConstraintName("FK__trusted_c__carpo__72910220");
 
                 entity.HasOne(d => d.UserNavigation)
                     .WithMany(p => p.TrustedCarpoolingDriverUserNavigation)
                     .HasForeignKey(d => d.User)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__trusted_ca__user__3AA1AEB8");
+                    .HasConstraintName("FK__trusted_ca__user__719CDDE7");
             });
 
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasIndex(e => e.Email)
-                    .HasName("UQ__User__AB6E6164D158352B")
-                    .IsUnique();
-
-                entity.HasIndex(e => e.FacePhotoFilename)
-                    .HasName("UQ__User__EE0A86D2CC9ED1DC")
-                    .IsUnique();
-
-                entity.HasIndex(e => e.IdentityPieceFilename)
-                    .HasName("UQ__User__92C8CAEB16F17024")
-                    .IsUnique();
-
-                entity.HasIndex(e => e.Phone)
-                    .HasName("UQ__User__B43B145F95B41DF7")
-                    .IsUnique();
-
-                entity.HasIndex(e => e.TrustedCarpoolingDriverCode)
-                    .HasName("UQ__User__1524E4D4FA85282E")
+                    .HasName("UQ__User__AB6E6164FC2BE659")
                     .IsUnique();
 
                 entity.HasIndex(e => e.UserName)
-                    .HasName("UQ__User__66DCF95CA1AD434C")
+                    .HasName("UQ__User__66DCF95C5D615E45")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -285,7 +295,8 @@ namespace model
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
-                    .HasColumnType("datetime");
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Email)
                     .IsRequired()
@@ -370,7 +381,8 @@ namespace model
 
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnName("updated_at")
-                    .HasColumnType("datetime");
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.UserName)
                     .IsRequired()
@@ -378,6 +390,8 @@ namespace model
                     .HasMaxLength(250)
                     .IsUnicode(false);
             });
+            modelBuilder.Entity<User>().HasMany(u => u.Carpooling).WithOne(c => c.CreatorNavigation).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasMany(u => u.Car).WithOne(c => c.OwnerNavigation).HasForeignKey(c => c.Owner).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

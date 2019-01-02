@@ -69,10 +69,10 @@ create table carpooling (
 
 
 create table carpooling_applicant (
+	id int IDENTITY(1,1) primary key,
 	carpooling int foreign key references carpooling(id) not null,
 	[User] int foreign key references [User](id) not null,
-	has_been_accepted bit not null,
-	constraint pk_carpooling_applicant primary key(carpooling, [user]));
+	has_been_accepted bit not null);
 
 
 create table private_message (
@@ -98,6 +98,21 @@ go
 
 
 go
+create TRIGGER TR_USER_CREATION
+	on dbo.[user]
+	after insert
+as
+begin
+	update dbo.[user]
+	set created_at = getDate() , updated_at = getdate()
+	from dbo.[User] u
+	join inserted new on new.id = u.id
+end
+go
+
+
+
+go
 CREATE TRIGGER TR_carpooling_Modification
 	ON dbo.carpooling
 AFTER UPDATE
@@ -107,6 +122,19 @@ BEGIN
 	SET updated_at = GETDATE()
 	FROM dbo.carpooling C
 	JOIN INSERTED new ON new.Id = C.Id
+end
+go
+
+go
+create TRIGGER TR_carpooling_Creation
+	on dbo.Carpooling
+after insert
+as
+begin
+	update dbo.carpooling
+	set created_at = getDate() , updated_at = getDate()
+	from dbo.carpooling c
+	join inserted new on new.Id = c.Id
 end
 go
 

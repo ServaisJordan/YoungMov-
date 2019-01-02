@@ -10,16 +10,16 @@ namespace DAL
 {
     public class DataAccess : Dao
     {
-        private readonly smartCityContext context;
-        public DataAccess(smartCityContext context) {
+        private readonly YoungMovContext context;
+        public DataAccess(YoungMovContext context) {
             this.context = context;
         }
 
         #region User
-        public async Task<IEnumerable<User>> GetUsers(int pageSize, int pageIndex, string filter) {
+        public async Task<IEnumerable<User>> GetUsers(int pageSize, int pageIndex, string userNameFilter) {
             return await context.User.Skip(pageSize*pageIndex)
                                     .Take(pageSize)
-                                    .Where(u => filter == null || u.UserName.Contains(filter))
+                                    .Where(u => userNameFilter == null || u.UserName.Contains(userNameFilter))
                                     .ToListAsync();
         }
 
@@ -38,12 +38,12 @@ namespace DAL
                                     .Include(user => user.Car);
         } 
 
-        public async Task<User> GetUser(string userName, string password) {
+        public async Task<User> GetUser(string userName, string password, string role) {
             return await context.User.Select(u => new User() {
                 UserName = u.UserName,
                 Password = u.Password,
                 Role = u.Role
-            }).FirstOrDefaultAsync(user => user.UserName == userName && user.Password == password);
+            }).FirstOrDefaultAsync(user => user.UserName == userName && user.Password == password && user.Role == role);
         }
 
 
@@ -67,9 +67,9 @@ namespace DAL
 
 
         public async Task RemoveUser(int id) {
-            User user = await GetUser(id);
+            User user = await context.User.Include(u => u.Car).Include(u => u.Carpooling).ThenInclude(c => c.CarpoolingApplicant).FirstOrDefaultAsync(u => u.Id == id);
             if (user != null) {
-                context.Remove(user);
+                context.User.Remove(user);
                 context.SaveChanges();
             }
         }
@@ -105,6 +105,14 @@ namespace DAL
                 context.Remove(carpooling);
                 context.SaveChanges();
             }
+        }
+        #endregion
+
+        #region NumberOfUsers
+        public async Task<int> GetNumberOfUsers(DateTime ?date, char ?gender) {
+            var users = await context.User.Where(u => date == null || DateTime.Compare((DateTime) date, (DateTime) u.CreatedAt) < 0).ToListAsync();
+            users = users.Where(u => gender == null || u.Gender == gender.ToString()).ToList();
+            return users.Count();
         }
         #endregion
     }

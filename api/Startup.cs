@@ -29,7 +29,7 @@ namespace api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<smartCityContext>(config => config.UseSqlServer(Configuration.GetConnectionString("SmartCity")));
+            services.AddDbContext<YoungMovContext>(config => config.UseSqlServer(Configuration.GetConnectionString("SmartCity")));
             services.AddTransient<DataAccess>();
             AutoMapper.Mapper.Initialize(config => config.AddProfile<Infrastructure.MappingProfile>());
             services.AddAutoMapper();
@@ -79,7 +79,7 @@ namespace api
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "YoungMovAPi", Version = "v1" });
+                c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
             });
             
             services.AddMvc(options =>
