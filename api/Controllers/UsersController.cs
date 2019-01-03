@@ -49,6 +49,7 @@ namespace api.Controllers
         }
 
         // POST api/Users
+        [AllowAnonymous]
         [HttpPost]
         public IActionResult Post([FromBody] UserDTORegistration userDTO)
         {
@@ -61,6 +62,7 @@ namespace api.Controllers
         public async Task<ActionResult<UserDTO>> Put(int id, [FromBody] UserDTO userDTO)
         {
             User userModel = await dao.GetUser(id);
+            if (userModel == null) return NotFound();
             User user = dao.SetUser(mapper.Map(userDTO, userModel));
             return Ok(mapper.Map<UserDTO>(user));
         }

@@ -40,10 +40,6 @@ namespace model
                     .HasName("UQ__car__41B4436D4ACE34BA")
                     .IsUnique();
 
-                entity.HasIndex(e => e.PhotoFileName)
-                    .HasName("UQ__car__22F493643FEF8F69")
-                    .IsUnique();
-
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CarModel)
@@ -70,21 +66,6 @@ namespace model
                     .IsUnicode(false);
 
                 entity.Property(e => e.Owner).HasColumnName("owner");
-
-                entity.Property(e => e.PhotoFileName)
-                    .IsRequired()
-                    .HasColumnName("photo_file_name")
-                    .HasMaxLength(250)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.PhotoSentAt)
-                    .HasColumnName("photo_sent_at")
-                    .HasMaxLength(250)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.PhotoValidatedAt)
-                    .HasColumnName("photo_validated_at")
-                    .HasColumnType("datetime");
 
                 entity.Property(e => e.ValidatedAt)
                     .HasColumnName("validated_at")

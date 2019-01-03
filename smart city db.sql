@@ -44,9 +44,6 @@ create table car (
 	color varchar(250) not null,
 	license_plate_number varchar(250) unique not null,
 	car_model varchar(250) not null,
-	photo_file_name varchar(250) not null unique,
-	photo_sent_at varchar(250),
-	photo_validated_at DateTime,
 	[owner] int foreign key references [user](id) not null);
 
 
@@ -138,6 +135,13 @@ begin
 end
 go
 
+delete from carpooling_applicant;
+delete from carpooling;
+delete from private_message;
+delete from Car;
+delete from trusted_carpooling_driver;
+delete from [user];
+
 insert into dbo.[User] ([role], [password], userName, email, gender, locality, postalCode) values(
 	'backoffice',
 	'123',
@@ -147,13 +151,13 @@ insert into dbo.[User] ([role], [password], userName, email, gender, locality, p
 	'marcher-en-famenne',
 	'6950');
 
-	insert into dbo.Car (color, license_plate_number, car_model, photo_file_name, [owner]) values (
-		'black', 'jklm956', 'porsh', 'maPorsh', 1
-	)
+	insert into dbo.Car (color, license_plate_number, car_model, [owner]) values (
+		'black', 'jklm956', 'porsh', (select id from [user] where userName = 'jordan')
+	);
 
 
 insert into dbo.carpooling (nb_places, place_price, destination_from, destination_to, locality_from, locality_to, postalCode_From, postalCode_To, Car, creator) values (
-	3,56, 'place roi albert', 'rue joseph calozet', 'marche-en-famenne', 'Namur', '6950', '7000', 1, 1
+	3,56, 'place roi albert', 'rue joseph calozet', 'marche-en-famenne', 'Namur', '6950', '7000', (select id from car where owner = (select id from [user] where username = 'jodran') and color = 'black'), (select id from [user] where userName = 'jordan')
 );
 
 insert into dbo.[User] ([role], [password], userName, email, gender, locality, postalCode) values(
@@ -166,7 +170,7 @@ insert into dbo.[User] ([role], [password], userName, email, gender, locality, p
 	'6950');
 
 insert into carpooling_applicant (carpooling, [User], has_been_accepted) values (
-	1, 2, 1
+	(select id from carpooling where nb_places = 3), (select id from [user] where userName = 'dylan'), 1
 );
 
 insert into dbo.[User] ([role], [password], userName, email, gender, locality, postalCode) values(

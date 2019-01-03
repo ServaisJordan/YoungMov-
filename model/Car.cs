@@ -16,9 +16,6 @@ namespace model
         public string Color { get; set; }
         public string LicensePlateNumber { get; set; }
         public string CarModel { get; set; }
-        public string PhotoFileName { get; set; }
-        public string PhotoSentAt { get; set; }
-        public DateTime? PhotoValidatedAt { get; set; }
         public int Owner { get; set; }
 
         public User OwnerNavigation { get; set; }

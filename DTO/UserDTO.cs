@@ -14,7 +14,21 @@ namespace DTO
             TrustedCarpoolingDriverCarpoolerNavigation = new HashSet<TrustedCarpoolingDriverDTO>();
             TrustedCarpoolingDriverUserNavigation = new HashSet<TrustedCarpoolingDriverDTO>();
         }
+        public string FacePhotoFilename { get; set; }
+        public DateTime? FacePhotoSentAt { get; set; }
+        public DateTime? FacePhotoValidatedAt { get; set; }
+        public string IdentityPieceFilename { get; set; }
+        public DateTime? IdentityPieceSentAt { get; set; }
+        public DateTime? IdentityPieceValidatedAt { get; set; }
+        public DateTime? EmailValidatedAt { get; set; }
         public ICollection<CarDTO> Car { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public string TrustedCarpoolingDriverCode { get; set; }
+        public int Id { get; set; }
+        public byte[] Timestamp { get; set; }
+
+
         public ICollection<CarpoolingDTO> Carpooling { get; set; }
         //public ICollection<CarpoolingApplicantDTO> CarpoolingApplicant { get; set; }
         public ICollection<PrivateMessageDTO> PrivateMessage { get; set; }
