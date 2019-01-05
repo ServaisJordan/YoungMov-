@@ -454,6 +454,7 @@
       "DAL/1.0.0": {
         "dependencies": {
           "DAO": "1.0.0",
+          "Exceptions": "1.0.0",
           "Microsoft.EntityFrameworkCore": "2.1.4",
           "model": "1.0.0"
         },
@@ -481,6 +482,14 @@
         },
         "compile": {
           "DTO.dll": {}
+        }
+      },
+      "Exceptions/1.0.0": {
+        "runtime": {
+          "Exceptions.dll": {}
+        },
+        "compile": {
+          "Exceptions.dll": {}
         }
       },
       "model/1.0.0": {
@@ -3523,6 +3532,11 @@
       "sha512": ""
     },
     "DTO/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Exceptions/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

@@ -947,6 +947,16 @@
           "bin/placeholder/DAO.dll": {}
         }
       },
+      "Exceptions/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.0",
+        "compile": {
+          "bin/placeholder/Exceptions.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Exceptions.dll": {}
+        }
+      },
       "model/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v2.1",
@@ -3553,6 +3563,11 @@
       "path": "../DAO/DAO.csproj",
       "msbuildProject": "../DAO/DAO.csproj"
     },
+    "Exceptions/1.0.0": {
+      "type": "project",
+      "path": "../Exceptions/Exceptions.csproj",
+      "msbuildProject": "../Exceptions/Exceptions.csproj"
+    },
     "model/1.0.0": {
       "type": "project",
       "path": "../model/model.csproj",
@@ -3562,6 +3577,7 @@
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.1": [
       "DAO >= 1.0.0",
+      "Exceptions >= 1.0.0",
       "Microsoft.EntityFrameworkCore >= 2.1.4",
       "Microsoft.NETCore.App >= 2.1.0",
       "model >= 1.0.0"
@@ -3599,6 +3615,9 @@
           "projectReferences": {
             "C:\\Users\\HP\\Desktop\\apiSmartCity\\DAO\\DAO.csproj": {
               "projectPath": "C:\\Users\\HP\\Desktop\\apiSmartCity\\DAO\\DAO.csproj"
+            },
+            "C:\\Users\\HP\\Desktop\\apiSmartCity\\Exceptions\\Exceptions.csproj": {
+              "projectPath": "C:\\Users\\HP\\Desktop\\apiSmartCity\\Exceptions\\Exceptions.csproj"
             },
             "C:\\Users\\HP\\Desktop\\apiSmartCity\\model\\model.csproj": {
               "projectPath": "C:\\Users\\HP\\Desktop\\apiSmartCity\\model\\model.csproj"

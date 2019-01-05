@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace model
 {
@@ -36,7 +35,6 @@ namespace model
         public DateTime? UpdatedAt { get; set; }
         public string Locality { get; set; }
         public string PostalCode { get; set; }
-        [Timestamp]
         public byte[] Timestamp { get; set; }
 
         public ICollection<Car> Car { get; set; }

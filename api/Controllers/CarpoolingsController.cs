@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using model;
 using AutoMapper;
-using DTO;
+using DTO.CarpoolingControllerDTO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -31,8 +31,8 @@ namespace api.Controllers
         }
         // GET api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CarpoolingDTO>>> Get(int pageSize = 10, int pageIndex = 0, string filterFrom = null) {
-            IEnumerable<Carpooling> carpoolings = await dao.GetCarpoolings(pageSize, pageIndex, filterFrom);
+        public async Task<ActionResult<IEnumerable<CarpoolingDTO>>> Get(int pageSize = 10, int pageIndex = 0, string filterFrom = null, string filterTo = null) {
+            IEnumerable<Carpooling> carpoolings = await dao.GetCarpoolings(pageSize, pageIndex, filterFrom, filterTo);
             IEnumerable<CarpoolingDTO> carpoolingsDTO = carpoolings.Select(mapper.Map<CarpoolingDTO>);
             return Ok(carpoolingsDTO);
         }
@@ -55,9 +55,11 @@ namespace api.Controllers
 
         // PUT api/Users/5
         [HttpPut("{id}")]
-        public ActionResult<UserDTO> Put(int id, [FromBody] CarpoolingDTO carpoolingDTO)
+        public async Task<ActionResult<UserDTO>> Put(int id, [FromBody] CarpoolingDTO carpoolingDTO)
         {
-            Carpooling carpooling = dao.SetCarpooling(mapper.Map<Carpooling>(carpoolingDTO));
+            Carpooling carpoolingModel = await dao.GetCarpooling(id);
+            if (carpoolingModel == null) return NotFound();
+            Carpooling carpooling = dao.SetCarpooling(mapper.Map(carpoolingDTO, carpoolingModel));
             return Ok(mapper.Map<CarpoolingDTO>(carpooling));
         }
 

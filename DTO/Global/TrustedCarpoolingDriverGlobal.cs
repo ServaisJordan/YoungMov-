@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DTO
+namespace DTO.Global
 {
-    public partial class TrustedCarpoolingDriverDTO
+    public class TrustedCarpoolingDriverGlobal
     {
         public int User { get; set; }
         public int Carpooler { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
         public byte[] Timestamp { get; set; }
-
-        public UserDTO CarpoolerNavigation { get; set; }
     }
 }

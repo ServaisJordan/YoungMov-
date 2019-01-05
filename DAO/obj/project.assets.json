@@ -3554,11 +3554,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\HP\\Desktop\\apiSmartCity\\DAO\\DAO.csproj",
+      "projectUniqueName": "c:\\Users\\HP\\Desktop\\apiSmartCity\\DAO\\DAO.csproj",
       "projectName": "DAO",
-      "projectPath": "C:\\Users\\HP\\Desktop\\apiSmartCity\\DAO\\DAO.csproj",
+      "projectPath": "c:\\Users\\HP\\Desktop\\apiSmartCity\\DAO\\DAO.csproj",
       "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\HP\\Desktop\\apiSmartCity\\DAO\\obj\\",
+      "outputPath": "c:\\Users\\HP\\Desktop\\apiSmartCity\\DAO\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using DTO.Global;
 
-namespace DTO
+namespace DTO.UserControllerDTO
 {
-    public partial class UserDTORegistration : UserGlobal
+    public class UserDTORegistration : UserGlobal
     {
         public string Role { get; set; }
         public string Password { get; set; }

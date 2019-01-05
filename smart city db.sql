@@ -23,8 +23,8 @@ create table [User] (
 	identityPiece_validated_at datetime,
 	phone varchar(250),
 	trusted_carpooling_driver_code varchar(250),
-	created_at datetime constraint User_Date_creation default getDate(),
-	updated_at datetime CONSTRAINT User_Date_modification default getDate(),
+	created_at datetime,
+	updated_at datetime,
 	locality varchar(250) not null,
 	postalCode varchar(250) not null,
 	timestamp);
@@ -32,14 +32,14 @@ create table [User] (
 create table trusted_carpooling_driver (
 	[user] int foreign key references [user](id) not null,
 	carpooler int foreign key references [user](id) not null,
-	created_at DateTime not null constraint Trusted_carpooling_driver_Date_creation default getDate(),
+	created_at DateTime,
 	timestamp,
 	constraint Pk_trusted_carpooling_driver primary key([user], carpooler));
 
 
 create table car (
 	id int identity(1,1) primary key,
-	created_at datetime not null constraint Car_Date_creation default getDate(),
+	created_at datetime,
 	validated_at datetime,
 	color varchar(250) not null,
 	license_plate_number varchar(250) unique not null,
@@ -52,8 +52,8 @@ create table carpooling (
 	[description] varchar(250),
 	nb_places int not null,
 	place_price smallmoney not null,
-	created_at datetime constraint carpooling_Date_creation default getDate(),
-	updated_at datetime constraint carpooling_Date_modification default getDate(),
+	created_at datetime,
+	updated_at datetime,
 	destination_from varchar(250) not null,
 	destination_to varchar(250) not null,
 	locality_from varchar(250) not null,
@@ -133,6 +133,19 @@ begin
 	from dbo.carpooling c
 	join inserted new on new.Id = c.Id
 end
+go
+
+go
+CREATE TRIGGER TR_Trusted_Carpooler_Creation
+	on dbo.trusted_carpooling_driver
+after insert
+as 
+BEGIN
+	update dbo.trusted_carpooling_driver
+	set created_at = getDate()
+	from dbo.trusted_carpooling_driver t
+	join inserted new on new.[User] = t.[User] and new.carpooler = t.carpooler
+END
 go
 
 delete from carpooling_applicant;

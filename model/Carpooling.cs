@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace model
 {
@@ -25,7 +24,6 @@ namespace model
         public string PostalCodeFrom { get; set; }
         public int Car { get; set; }
         public int Creator { get; set; }
-        [Timestamp]
         public byte[] Timestamp { get; set; }
 
         public Car CarNavigation { get; set; }

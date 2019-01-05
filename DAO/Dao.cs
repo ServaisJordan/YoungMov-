@@ -18,7 +18,7 @@ namespace DAO
         #endregion
 
         #region Carpooling
-        Task<IEnumerable<Carpooling>> GetCarpoolings(int pageSize, int pageIndex, string filter);
+        Task<IEnumerable<Carpooling>> GetCarpoolings(int pageSize, int pageIndex, string filterFrom, string filterTo);
         Task<Carpooling> GetCarpooling(int id);
         Carpooling AddCarpooling(Carpooling carpooling);
         Carpooling SetCarpooling(Carpooling carpooling);
@@ -28,5 +28,21 @@ namespace DAO
         #region NumberOfUsers
         Task<int> GetNumberOfUsers(DateTime ?date, char ?genrder);
         #endregion
+
+        #region Car
+        Task<ICollection<Car>> GetCars(int pageIndex, int pageSize);
+        Task<Car> GetCar(int id);
+        Task<Car> AddCar(Car car);
+        Task<Car> SetCar(Car car);
+        Task RemoveCar(int id);
+        #endregion
+
+        #region PrivateMessage
+        Task<ICollection<PrivateMessage>> GetPrivateMessages(int pageIndex, int pageSize);
+        Task<PrivateMessage> GetPrivateMessage(int id);
+        Task<PrivateMessage> AddPrivateMessage(PrivateMessage privateMessage);
+        Task<PrivateMessage> SetPrivateMessage(PrivateMessage privateMessage);
+        Task RemovePrivateMessage(int id);
+        #endregion PrivateMessage
     }
 }

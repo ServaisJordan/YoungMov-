@@ -103,7 +103,8 @@ namespace api
             app.UseSwagger();
             app.UseCors(builder =>{ builder.AllowAnyOrigin()
                                         .AllowAnyHeader()
-                                        .AllowAnyMethod();});
+                                        .AllowAnyMethod()
+                                        .AllowCredentials();});
 
             app.UseSwaggerUI(c =>
             {

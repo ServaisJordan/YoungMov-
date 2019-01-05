@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\model\model.csproj" />
     <ProjectReference Include="..\DAO\DAO.csproj" />
+    <ProjectReference Include="..\Exceptions\Exceptions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

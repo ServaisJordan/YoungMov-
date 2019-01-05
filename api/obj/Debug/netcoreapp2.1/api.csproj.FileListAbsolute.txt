@@ -42,3 +42,5 @@ C:\Users\jorda\Desktop\apiSmartCity\api\obj\Debug\netcoreapp2.1\api.RazorTargetA
 C:\Users\jorda\Desktop\apiSmartCity\api\obj\Debug\netcoreapp2.1\api.csproj.CopyComplete
 C:\Users\HP\Desktop\apiSmartCity\api\bin\Debug\netcoreapp2.1\DAO.dll
 C:\Users\HP\Desktop\apiSmartCity\api\bin\Debug\netcoreapp2.1\DAO.pdb
+C:\Users\HP\Desktop\apiSmartCity\api\bin\Debug\netcoreapp2.1\Exceptions.dll
+C:\Users\HP\Desktop\apiSmartCity\api\bin\Debug\netcoreapp2.1\Exceptions.pdb

@@ -11,7 +11,7 @@ namespace model
         }
 
         public int Id { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
         public DateTime? ValidatedAt { get; set; }
         public string Color { get; set; }
         public string LicensePlateNumber { get; set; }

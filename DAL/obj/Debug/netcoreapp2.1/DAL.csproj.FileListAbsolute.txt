@@ -24,3 +24,5 @@ C:\Users\jorda\Desktop\apiSmartCity\DAL\obj\Debug\netcoreapp2.1\DAL.dll
 C:\Users\jorda\Desktop\apiSmartCity\DAL\obj\Debug\netcoreapp2.1\DAL.pdb
 C:\Users\HP\Desktop\apiSmartCity\DAL\bin\Debug\netcoreapp2.1\DAO.dll
 C:\Users\HP\Desktop\apiSmartCity\DAL\bin\Debug\netcoreapp2.1\DAO.pdb
+C:\Users\HP\Desktop\apiSmartCity\DAL\bin\Debug\netcoreapp2.1\Exceptions.dll
+C:\Users\HP\Desktop\apiSmartCity\DAL\bin\Debug\netcoreapp2.1\Exceptions.pdb

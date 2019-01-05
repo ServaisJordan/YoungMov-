@@ -7,7 +7,7 @@ namespace model
     {
         public int User { get; set; }
         public int Carpooler { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
         public byte[] Timestamp { get; set; }
 
         public User CarpoolerNavigation { get; set; }

@@ -30,13 +30,13 @@ namespace api.Controllers
 
         // POST api/Users
         [HttpPost]
-        public void Post([FromBody] UserDTO userDTO)
+        public void Post([FromBody] string userDTO)
         {
         }
 
         // PUT api/Users/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] UserDTO userDTO)
+        public void Put(int id, [FromBody] string userDTO)
         {
         }
 

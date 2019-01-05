@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using model;
 using DAO;
+using Exceptions;
 
 namespace DAL
 {
@@ -32,10 +33,11 @@ namespace DAL
         }
 
         public Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<User, ICollection<Car>> IncludeQuery() {
-            return context.User.Include(user => user.Carpooling)
-                                    .Include(user => user.PrivateMessage)
-                                    .ThenInclude(p => p.ReponseNavigation)
-                                    .Include(user => user.Car);
+            return context.User.Include(user => user.Carpooling).ThenInclude(c => c.CarNavigation)
+                                .Include(user => user.CarpoolingApplicant)
+                                .Include(user => user.TrustedCarpoolingDriverUserNavigation)
+                                .Include(user => user.PrivateMessage).ThenInclude(p => p.ReponseNavigation)
+                                .Include(user => user.Car);
         } 
 
         public async Task<User> GetUser(string userName, string password, string role) {
@@ -73,18 +75,21 @@ namespace DAL
                 context.SaveChanges();
             }
         }
-        #endregion
+        #endregion User
 
         #region Carpooling
-        public async Task<IEnumerable<Carpooling>> GetCarpoolings(int pageSize, int pageIndex, string filter) => 
+        public async Task<IEnumerable<Carpooling>> GetCarpoolings(int pageSize, int pageIndex, string filterFrom, string filterTo) => 
         await context.Carpooling.Skip(pageSize * pageIndex)
                                 .Take(pageSize)
-                                .Where(c => filter == null || c.LocalityFrom.Contains(filter))
+                                .Where(c => filterFrom == null || c.LocalityFrom.Contains(filterFrom))
+                                .Where(c => filterTo == null || c.LocalityTo.Contains(filterTo))
                                 .ToListAsync();
 
         public async Task<Carpooling> GetCarpooling(int id) =>
              await context.Carpooling.Include(c => c.Creator)
-                                    .FirstOrDefaultAsync();
+                                    .Include(c => c.CarpoolingApplicant).ThenInclude(c => c.UserNavigation)
+                                    .Include(c => c.Car)
+                                    .FirstOrDefaultAsync(c => c.Id == id);
 
         public Carpooling AddCarpooling(Carpooling carpooling) {
             context.Carpooling.Add(carpooling);
@@ -103,17 +108,82 @@ namespace DAL
             Carpooling carpooling = await GetCarpooling(id);
             if (carpooling != null) {
                 context.Remove(carpooling);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
-        #endregion
+        #endregion Carpooling
 
         #region NumberOfUsers
-        public async Task<int> GetNumberOfUsers(DateTime ?date, char ?gender) {
-            var users = await context.User.Where(u => date == null || DateTime.Compare((DateTime) date, (DateTime) u.CreatedAt) < 0).ToListAsync();
-            users = users.Where(u => gender == null || u.Gender == gender.ToString()).ToList();
+        public async Task<int> GetNumberOfUsers(DateTime? date, char? gender) {
+            var users = await context.User.Where(u => date == null || DateTime.Compare((DateTime) date, (DateTime) u.CreatedAt) < 0)
+                                        .Where(u => gender == null || u.Gender == gender.ToString())
+                                        .ToListAsync();
             return users.Count();
         }
-        #endregion
+        #endregion NumberOfUsers
+
+
+        #region Car
+
+        public async Task<ICollection<Car>> GetCars(int pageIndex , int pageSize) {
+            return await context.Car.Skip(pageIndex * pageSize)
+                                    .Take(pageSize)
+                                    .ToListAsync();
+        }
+        public async Task<Car> GetCar(int id) {
+            return await context.Car.Include(c => c.OwnerNavigation)
+                                    .SingleOrDefaultAsync(c => c.Id == id);
+        }
+        public async Task<Car> AddCar(Car car) {
+            context.Car.Add(car);
+            await context.SaveChangesAsync();
+            return car;
+        }
+
+        public async Task<Car> SetCar(Car car) {
+            if (context.Entry(car).State == EntityState.Detached)
+                context.Attach(car).State = EntityState.Modified;
+            await context.SaveChangesAsync();
+            return car;
+        }
+
+        public async Task RemoveCar(int id) {
+            Car car = await GetCar(id);
+            context.Car.Remove(car);
+            await context.SaveChangesAsync();
+        }
+        #endregion Car
+
+
+        #region PrivateMessage
+        public async Task<ICollection<PrivateMessage>> GetPrivateMessages(int pageIndex, int pageSize) {
+            return await context.PrivateMessage.Skip(pageIndex * pageSize)
+                                            .Take(pageSize)
+                                            .ToListAsync();
+        }
+
+        public async Task<PrivateMessage> GetPrivateMessage(int id) {
+            return await context.PrivateMessage.Include(p => p.CreatorNavigation)
+                                            .SingleOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task<PrivateMessage> AddPrivateMessage(PrivateMessage privateMessage) {
+            context.PrivateMessage.Add(privateMessage);
+            await context.SaveChangesAsync();
+            return privateMessage;
+        }
+
+        public async Task<PrivateMessage> SetPrivateMessage(PrivateMessage privateMessage) {
+            if (context.Entry(privateMessage).State == EntityState.Detached)
+                context.Attach(privateMessage).State = EntityState.Modified;
+            await context.SaveChangesAsync();
+            return privateMessage;
+        }
+
+        public async Task RemovePrivateMessage(int id) {
+            context.PrivateMessage.Remove(await GetPrivateMessage(id));
+            await context.SaveChangesAsync();
+        }
+        #endregion PrivateMessage
     }
 }

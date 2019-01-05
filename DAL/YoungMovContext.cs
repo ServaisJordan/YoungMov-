@@ -1,8 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using model;
 
-namespace model
+namespace DAL
 {
     public partial class YoungMovContext : DbContext
     {
@@ -26,7 +27,7 @@ namespace model
         {
             if (!optionsBuilder.IsConfigured)
             {
-                throw new Exception("use the constructor with dbcontextoption argument");
+                throw new Exception("use the constructor with dbcontextOption argument");
             }
         }
 
@@ -37,7 +38,7 @@ namespace model
                 entity.ToTable("car");
 
                 entity.HasIndex(e => e.LicensePlateNumber)
-                    .HasName("UQ__car__41B4436D4ACE34BA")
+                    .HasName("UQ__car__41B4436DAAC43E8A")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -75,7 +76,7 @@ namespace model
                     .WithMany(p => p.Car)
                     .HasForeignKey(d => d.Owner)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__car__owner__793DFFAF");
+                    .HasConstraintName("FK__car__owner__3BFFE745");
             });
 
             modelBuilder.Entity<Carpooling>(entity =>
@@ -154,14 +155,15 @@ namespace model
                     .WithMany(p => p.Carpooling)
                     .HasForeignKey(d => d.Car)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__carpooling__car__7E02B4CC");
+                    .HasConstraintName("FK__carpooling__car__40C49C62");
 
                 entity.HasOne(d => d.CreatorNavigation)
                     .WithMany(p => p.Carpooling)
                     .HasForeignKey(d => d.Creator)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__carpoolin__creat__7EF6D905");
+                    .HasConstraintName("FK__carpoolin__creat__41B8C09B");
             });
+
             modelBuilder.Entity<Carpooling>().HasMany(c => c.CarpoolingApplicant).WithOne(cA => cA.CarpoolingNavigation).HasForeignKey(cA => cA.Carpooling).OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<CarpoolingApplicant>(entity =>
@@ -178,16 +180,14 @@ namespace model
                     .WithMany(p => p.CarpoolingApplicant)
                     .HasForeignKey(d => d.Carpooling)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__carpoolin__carpo__01D345B0");
+                    .HasConstraintName("FK__carpoolin__carpo__44952D46");
 
                 entity.HasOne(d => d.UserNavigation)
                     .WithMany(p => p.CarpoolingApplicant)
                     .HasForeignKey(d => d.User)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__carpooling__User__02C769E9");
+                    .HasConstraintName("FK__carpooling__User__4589517F");
             });
-
-            modelBuilder.Entity<CarpoolingApplicant>().HasOne(cA => cA.CarpoolingNavigation).WithMany(c => c.CarpoolingApplicant).OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<PrivateMessage>(entity =>
             {
@@ -216,12 +216,12 @@ namespace model
                     .WithMany(p => p.PrivateMessage)
                     .HasForeignKey(d => d.Creator)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__private_m__creat__0697FACD");
+                    .HasConstraintName("FK__private_m__creat__4959E263");
 
                 entity.HasOne(d => d.ReponseNavigation)
                     .WithMany(p => p.InverseReponseNavigation)
                     .HasForeignKey(d => d.Reponse)
-                    .HasConstraintName("FK__private_m__repon__078C1F06");
+                    .HasConstraintName("FK__private_m__repon__4A4E069C");
             });
 
             modelBuilder.Entity<TrustedCarpoolingDriver>(entity =>
@@ -248,23 +248,23 @@ namespace model
                     .WithMany(p => p.TrustedCarpoolingDriverCarpoolerNavigation)
                     .HasForeignKey(d => d.Carpooler)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__trusted_c__carpo__72910220");
+                    .HasConstraintName("FK__trusted_c__carpo__36470DEF");
 
                 entity.HasOne(d => d.UserNavigation)
                     .WithMany(p => p.TrustedCarpoolingDriverUserNavigation)
                     .HasForeignKey(d => d.User)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__trusted_ca__user__719CDDE7");
+                    .HasConstraintName("FK__trusted_ca__user__3552E9B6");
             });
 
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasIndex(e => e.Email)
-                    .HasName("UQ__User__AB6E6164FC2BE659")
+                    .HasName("UQ__User__AB6E61643F95BE3E")
                     .IsUnique();
 
                 entity.HasIndex(e => e.UserName)
-                    .HasName("UQ__User__66DCF95C5D615E45")
+                    .HasName("UQ__User__66DCF95CC5CC8CA5")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -373,6 +373,10 @@ namespace model
             });
             modelBuilder.Entity<User>().HasMany(u => u.Carpooling).WithOne(c => c.CreatorNavigation).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<User>().HasMany(u => u.Car).WithOne(c => c.OwnerNavigation).HasForeignKey(c => c.Owner).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasMany(u => u.TrustedCarpoolingDriverCarpoolerNavigation).WithOne(t => t.CarpoolerNavigation).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasMany(u => u.TrustedCarpoolingDriverUserNavigation).WithOne(t => t.UserNavigation).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasMany(u => u.PrivateMessage).WithOne(pm => pm.CreatorNavigation).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasMany(u => u.CarpoolingApplicant).WithOne(ca => ca.UserNavigation).HasForeignKey(ca => ca.User).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

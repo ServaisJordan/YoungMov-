@@ -1,6 +1,6 @@
 using System;
 
-namespace DTO
+namespace DTO.Global
 {
     public abstract class UserGlobal
     {
