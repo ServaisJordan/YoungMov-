@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.1",
-    "signature": "0a3e0e7cd6e93af0deba85aa300056108a111ca8"
+    "signature": "d628cc953acf00bcdc268d36d7af3ec51f1929fd"
   },
   "compilationOptions": {
     "defines": [
@@ -26,6 +26,7 @@
         "dependencies": {
           "AutoMapper": "8.0.0",
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "6.0.0",
+          "CloudinaryDotNet": "1.1.1",
           "DAL": "1.0.0",
           "DAO": "1.0.0",
           "DTO": "1.0.0",
@@ -73,6 +74,17 @@
         },
         "compile": {
           "lib/netstandard2.0/AutoMapper.Extensions.Microsoft.DependencyInjection.dll": {}
+        }
+      },
+      "CloudinaryDotNet/1.1.1": {
+        "runtime": {
+          "lib/netstandard1.6/CloudinaryDotNet.dll": {
+            "assemblyVersion": "1.1.1.0",
+            "fileVersion": "1.1.1.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard1.6/CloudinaryDotNet.dll": {}
         }
       },
       "Microsoft.EntityFrameworkCore/2.1.4": {
@@ -3366,6 +3378,13 @@
       "sha512": "sha512-njWYKGM3FokOlo9nj8kVLYyvJrGbLItmNA2A00lDXJnxybfP7TuZEYjQRt8ne+Cp0OF4W0ZzgdgxMioHfDEpdA==",
       "path": "automapper.extensions.microsoft.dependencyinjection/6.0.0",
       "hashPath": "automapper.extensions.microsoft.dependencyinjection.6.0.0.nupkg.sha512"
+    },
+    "CloudinaryDotNet/1.1.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zNUzlTbxDSa19rDCdGiXK8VHyyN97P8cP8eQvXdozmocWIYij25wikVdAPPH2NH/U6eIzd4spqy/bjXHSHaPUg==",
+      "path": "cloudinarydotnet/1.1.1",
+      "hashPath": "cloudinarydotnet.1.1.1.nupkg.sha512"
     },
     "Microsoft.EntityFrameworkCore/2.1.4": {
       "type": "package",

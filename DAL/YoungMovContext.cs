@@ -161,6 +161,8 @@ namespace DAL
                     .HasConstraintName("FK__carpoolin__creat__1699586C");
             });
 
+            modelBuilder.Entity<Carpooling>().HasMany(c => c.CarpoolingApplicant).WithOne(cA => cA.CarpoolingNavigation).HasForeignKey(cA => cA.Carpooling).OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<CarpoolingApplicant>(entity =>
             {
                 entity.ToTable("carpooling_applicant");
@@ -363,6 +365,12 @@ namespace DAL
                     .HasMaxLength(250)
                     .IsUnicode(false);
             });
+            modelBuilder.Entity<User>().HasMany(u => u.Carpooling).WithOne(c => c.CreatorNavigation).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasMany(u => u.Car).WithOne(c => c.OwnerNavigation).HasForeignKey(c => c.Owner).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasMany(u => u.TrustedCarpoolingDriverCarpoolerNavigation).WithOne(t => t.CarpoolerNavigation).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasMany(u => u.TrustedCarpoolingDriverUserNavigation).WithOne(t => t.UserNavigation).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasMany(u => u.PrivateMessage).WithOne(pm => pm.CreatorNavigation).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasMany(u => u.CarpoolingApplicant).WithOne(ca => ca.UserNavigation).HasForeignKey(ca => ca.User).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

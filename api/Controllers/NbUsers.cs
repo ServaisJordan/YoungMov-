@@ -14,16 +14,16 @@ namespace api
     [ApiController]
     public class NbUsers : ControllerBase {
         private readonly IMapper mapper;
-        private readonly Dao dal;
+        private readonly Dao dao;
 
         public NbUsers(IMapper mapper, DataAccess dal) {
             this.mapper = mapper;
-            this.dal = dal;
+            this.dao = dal;
         }
 
         [HttpGet]
         public async Task<ActionResult<int>> Get(DateTime ?date = null, char ?gender = null) {
-            return Ok(await dal.GetNumberOfUsers(date, gender));
+            return Ok(await dao.GetNumberOfUsers(date, gender));
         }
     }
 }

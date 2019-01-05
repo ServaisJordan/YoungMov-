@@ -21,3 +21,5 @@ C:\Users\HP\Desktop\apiSmartCity\api\obj\Release\netcoreapp2.1\api.RazorTargetAs
 C:\Users\HP\Desktop\apiSmartCity\api\obj\Release\netcoreapp2.1\api.csproj.CopyComplete
 C:\Users\HP\Desktop\apiSmartCity\api\obj\Release\netcoreapp2.1\api.dll
 C:\Users\HP\Desktop\apiSmartCity\api\obj\Release\netcoreapp2.1\api.pdb
+C:\Users\HP\Desktop\apiSmartCity\api\bin\Release\netcoreapp2.1\Exceptions.dll
+C:\Users\HP\Desktop\apiSmartCity\api\bin\Release\netcoreapp2.1\Exceptions.pdb
