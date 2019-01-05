@@ -44,5 +44,17 @@ namespace DAO
         Task<PrivateMessage> SetPrivateMessage(PrivateMessage privateMessage);
         Task RemovePrivateMessage(int id);
         #endregion PrivateMessage
+
+        #region TrustedCarpoolingDriver
+        Task<TrustedCarpoolingDriver> GetTrustedCarpoolingDriver(int id);
+        Task<TrustedCarpoolingDriver> AddTrustedCarpoolingDriver(TrustedCarpoolingDriver trustedCarpoolingDriver);
+        Task RemoveTrustedCarpoolingDriver(int id);
+        #endregion TrustedCarpoolingDriver
+
+        #region  CarpoolingApplicant
+        Task<CarpoolingApplicant> GetCarpoolingApplicant(int id);
+        Task<CarpoolingApplicant> AddCarpoolingApplicant(CarpoolingApplicant carpoolingApplicant);
+        Task RemoveCarpoolingApplicant(int id);
+        #endregion CarpoolingApplicant
     }
 }

@@ -185,5 +185,40 @@ namespace DAL
             await context.SaveChangesAsync();
         }
         #endregion PrivateMessage
+
+        #region TrustedCarpoolingDriver
+        public async Task<TrustedCarpoolingDriver> GetTrustedCarpoolingDriver(int id) {
+            return await context.TrustedCarpoolingDriver.SingleOrDefaultAsync(t => t.Id == id);
+        }
+
+        public async Task<TrustedCarpoolingDriver> AddTrustedCarpoolingDriver(TrustedCarpoolingDriver trustedCarpoolingDriver) {
+            context.TrustedCarpoolingDriver.Add(trustedCarpoolingDriver);
+            await context.SaveChangesAsync();
+            return trustedCarpoolingDriver;
+        }
+
+        public async Task RemoveTrustedCarpoolingDriver(int id) {
+            context.TrustedCarpoolingDriver.Remove(await GetTrustedCarpoolingDriver(id));
+            await context.SaveChangesAsync();
+        }
+        #endregion TrustedCarpoolingDriver
+
+
+        #region CarpoolingApplicant
+        public async Task<CarpoolingApplicant> GetCarpoolingApplicant(int id) {
+            return await context.CarpoolingApplicant.SingleOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<CarpoolingApplicant> AddCarpoolingApplicant(CarpoolingApplicant carpoolingApplicant) {
+            context.CarpoolingApplicant.Add(carpoolingApplicant);
+            await context.SaveChangesAsync();
+            return carpoolingApplicant;
+        }
+
+        public async Task RemoveCarpoolingApplicant(int id) {
+            context.CarpoolingApplicant.Remove(await GetCarpoolingApplicant(id));
+            await context.SaveChangesAsync();
+        }
+        #endregion CarpoolingApplicant
     }
 }

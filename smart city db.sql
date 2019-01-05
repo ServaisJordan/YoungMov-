@@ -30,11 +30,11 @@ create table [User] (
 	timestamp);
 
 create table trusted_carpooling_driver (
+	id int IDENTITY(1,1) PRIMARY key,
 	[user] int foreign key references [user](id) not null,
 	carpooler int foreign key references [user](id) not null,
 	created_at DateTime,
-	timestamp,
-	constraint Pk_trusted_carpooling_driver primary key([user], carpooler));
+	timestamp);
 
 
 create table car (

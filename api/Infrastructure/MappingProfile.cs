@@ -9,10 +9,10 @@ namespace api.Infrastructure {
             CreateMap<DTO.UserControllerDTO.UserDTO, User>().ForMember(u => u.Carpooling, opt => opt.Ignore())
                                                             .ForMember(u => u.Car, opt => opt.Ignore())
                                                             .ForMember(u => u.PrivateMessage, opt => opt.Ignore())
-                                                            .ForMember(u => u.CarpoolingApplicant, opt => opt.Ignore()).AfterMap((uDTO, u) => AddOrDeleteCarpoolingApplicant(uDTO, u))
+                                                            .ForMember(u => u.CarpoolingApplicant, opt => opt.Ignore())
                                                             .ForMember(u => u.CreatedAt, opt => opt.Ignore())
                                                             .ForMember(u => u.UpdatedAt, opt => opt.Ignore())
-                                                            .ForMember(u => u.TrustedCarpoolingDriverUserNavigation, opt => opt.Ignore()).AfterMap((uDTO, u) => AddOrDeleteTrustedCarpoolingDriverUserNavigation(uDTO, u));
+                                                            .ForMember(u => u.TrustedCarpoolingDriverUserNavigation, opt => opt.Ignore());
             CreateMap<User, DTO.UserControllerDTO.UserDTORegistration>().ReverseMap();
             CreateMap<Car, DTO.UserControllerDTO.CarDTO>().ReverseMap();
             CreateMap<Carpooling, DTO.UserControllerDTO.CarpoolingDTO>().ReverseMap();
@@ -23,7 +23,7 @@ namespace api.Infrastructure {
             CreateMap<User, DTO.CarpoolingControllerDTO.UserDTO>().ReverseMap();
             CreateMap<Car, DTO.CarpoolingControllerDTO.CarDTO>().ReverseMap();
             CreateMap<Carpooling, DTO.CarpoolingControllerDTO.CarpoolingDTO>();
-            CreateMap<DTO.CarpoolingControllerDTO.CarpoolingDTO, Carpooling>().ForMember(c => c.CarpoolingApplicant, opt => opt.Ignore()).AfterMap((cDTO, c) => UpdateCarpoolingApplicant(cDTO, c))
+            CreateMap<DTO.CarpoolingControllerDTO.CarpoolingDTO, Carpooling>().ForMember(c => c.CarpoolingApplicant, opt => opt.Ignore())
                                                                             .ForMember(c => c.CarNavigation, opt => opt.Ignore())
                                                                             .ForMember(c => c.CreatedAt, opt => opt.Ignore())
                                                                             .ForMember(c => c.UpdatedAt, opt => opt.Ignore())
@@ -40,37 +40,15 @@ namespace api.Infrastructure {
             CreateMap<DTO.PrivateMessageControllerDTO.PrivateMessageDTO, PrivateMessage>().ForMember(p => p.CreatedAt, opt => opt.Ignore())
                                                                                         .ForMember(p => p.CreatorNavigation, opt => opt.Ignore())
                                                                                         .ForMember(p => p.ReponseNavigation, opt => opt.Ignore());
-        }
 
-        private void AddOrDeleteCarpoolingApplicant(DTO.UserControllerDTO.UserDTO userDTO, User user) {
-            for(int i = 0; i < user.CarpoolingApplicant.Count(); i++) {
-                CarpoolingApplicant carpoolingApplicant = user.CarpoolingApplicant.ElementAt(i);
-                if (userDTO.Carpooling.SingleOrDefault(c => c.Id == carpoolingApplicant.Id) == null) user.CarpoolingApplicant.Remove(carpoolingApplicant);
-            }
-            foreach(var carpoolingApplicantDTO in userDTO.CarpoolingApplicant) {
-                if (carpoolingApplicantDTO.Id == 0) 
-                    user.CarpoolingApplicant.Add(Mapper.Map<CarpoolingApplicant>(carpoolingApplicantDTO));
-            }
-        }
+            CreateMap<TrustedCarpoolingDriver, DTO.TrustedCarpoolingDriverControllerDTO.TrustedCarpoolingDriverDTO>();
+            CreateMap<DTO.TrustedCarpoolingDriverControllerDTO.TrustedCarpoolingDriverDTO, TrustedCarpoolingDriver>().ForMember(t => t.CarpoolerNavigation, opt => opt.Ignore())
+                                                                                                                    .ForMember(t => t.UserNavigation, opt => opt.Ignore())
+                                                                                                                    .ForMember(t => t.CreatedAt, opt => opt.Ignore());
 
-        private void AddOrDeleteTrustedCarpoolingDriverUserNavigation(DTO.UserControllerDTO.UserDTO userDTO, User user) {
-            for (int i = 0; i < user.TrustedCarpoolingDriverUserNavigation.Count(); i++) {
-                TrustedCarpoolingDriver trustedCarpoolingDriver = user.TrustedCarpoolingDriverUserNavigation.ElementAt(i);
-                if (userDTO.TrustedCarpoolingDriverUserNavigation.SingleOrDefault(t => t.Carpooler == trustedCarpoolingDriver.Carpooler || t.User == trustedCarpoolingDriver.User) == null)
-                    user.TrustedCarpoolingDriverUserNavigation.Remove(trustedCarpoolingDriver);
-            }
-            foreach(DTO.UserControllerDTO.TrustedCarpoolingDriverDTO trustedCarpoolingDriverDTO in userDTO.TrustedCarpoolingDriverUserNavigation) {
-                if (user.TrustedCarpoolingDriverUserNavigation.SingleOrDefault(t => t.User == trustedCarpoolingDriverDTO.User || t.Carpooler == trustedCarpoolingDriverDTO.Carpooler) == null)
-                    user.TrustedCarpoolingDriverUserNavigation.Add(Mapper.Map<TrustedCarpoolingDriver>(trustedCarpoolingDriverDTO));
-            }
-        }
-
-        private void UpdateCarpoolingApplicant(DTO.CarpoolingControllerDTO.CarpoolingDTO carpoolingDTO, Carpooling carpooling) {
-            
-            foreach(var carpoolingApplicantDTO in carpoolingDTO.CarpoolingApplicant) {
-                if (carpoolingApplicantDTO.Id != 0)
-                    Mapper.Map(carpoolingApplicantDTO, carpooling.CarpoolingApplicant.SingleOrDefault(c => c.Id == carpoolingApplicantDTO.Id));
-            }
+            CreateMap<CarpoolingApplicant, DTO.CarpoolingApplicantControllerDTO.CarpoolingApplicantDTO>();
+            CreateMap<DTO.CarpoolingApplicantControllerDTO.CarpoolingApplicantDTO, CarpoolingApplicant>().ForMember(c => c.CarpoolingNavigation, opt => opt.Ignore())
+                                                                                                        .ForMember(c => c.UserNavigation, opt => opt.Ignore());
         }
     }
 }
