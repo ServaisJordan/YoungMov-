@@ -9,23 +9,21 @@ using DAO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using DAL;
+using Microsoft.AspNetCore.Identity;
+using Exceptions;
 
 namespace api.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
-    public class CarpoolingApplicantController : ControllerBase
+    public class CarpoolingApplicantController : BaseController
     {
-        private readonly Dao dao;
-        private readonly IMapper mapper;
-        public CarpoolingApplicantController(IMapper mapper, DataAccess dal)
-        {
-            this.mapper = mapper;
-            dao = dal;
-        }
+        public CarpoolingApplicantController(UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper, DataAccess dal) :
+            base(userManager, signInManager, mapper, dal)
+        { }
 
-        
+
         [HttpGet("{id}")]
         public async Task<ActionResult<CarpoolingApplicantDTO>> Get(int id)
         {
@@ -34,18 +32,35 @@ namespace api.Controllers
             return Ok(mapper.Map<CarpoolingApplicantDTO>(carpoolingApplicant));
         }
 
-        
+        [HttpPut("{id}")]
+        public async Task<ActionResult<CarpoolingApplicantDTO>> Put(int id, [FromBody] CarpoolingApplicantDTO carpoolingApplicantDTO) {
+            User user = await GetCurrentUserAsync();
+            CarpoolingApplicant carpoolingApplicantModel = await dao.GetCarpoolingApplicant(id);
+            if (user.Role == "client" && user.Carpooling.SingleOrDefault(c => c.Id == carpoolingApplicantDTO.Carpooling) == null) return Unauthorized();
+            CarpoolingApplicant carpoolingApplicant = await dao.SetCarpoolingApplicant(mapper.Map(carpoolingApplicantDTO, carpoolingApplicantModel));
+            return Ok(mapper.Map<CarpoolingApplicantDTO>(carpoolingApplicant));
+        }
+
         [HttpPost]
         public async Task<ActionResult<CarpoolingApplicantDTO>> Post([FromBody] CarpoolingApplicantDTO carpoolingApplicantDTO)
         {
+            var user = await GetCurrentUserAsync();
+            if (user.Role == "client" && user.Id != carpoolingApplicantDTO.User) return Unauthorized();
+            if (user.Carpooling.SingleOrDefault(c => c.Id == carpoolingApplicantDTO.Carpooling) != null) 
+                throw new JoiningHisOwnCarpoolingException("unauthorized to join his own carpooling"); 
+            Carpooling carpooling = await dao.GetCarpooling(carpoolingApplicantDTO.Carpooling);
+            if (carpooling.NbPlaces >= carpooling.CarpoolingApplicant.Count()) throw new TooMuchParticipantsException("too much participant");
             CarpoolingApplicant carpoolingApplicant = await dao.AddCarpoolingApplicant(mapper.Map<CarpoolingApplicant>(carpoolingApplicantDTO));
-            return Created("api/Cars/"+carpoolingApplicant.Id, mapper.Map<CarpoolingApplicantDTO>(carpoolingApplicant));
+            return Created("api/Cars/" + carpoolingApplicant.Id, mapper.Map<CarpoolingApplicantDTO>(carpoolingApplicant));
         }
-        
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            await dao.RemoveTrustedCarpoolingDriver(id);
+            CarpoolingApplicant carpoolingApplicant = await dao.GetCarpoolingApplicant(id);
+            var user = await GetCurrentUserAsync();
+            if (user.Role == "client" && user.Id != carpoolingApplicant.User) return Unauthorized();
+            await dao.RemoveCarpoolingApplicant(carpoolingApplicant);
             return Ok();
         }
     }

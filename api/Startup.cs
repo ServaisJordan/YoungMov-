@@ -14,6 +14,7 @@ using DAL;
 using Swashbuckle.AspNetCore.Swagger;
 using api.Infrastructure;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Identity;
 
 namespace api
 {
@@ -29,8 +30,17 @@ namespace api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<YoungMovContext>()
+                .AddDefaultTokenProviders();
+            services.Configure<IdentityOptions>(options => {
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                options.User.RequireUniqueEmail = true;
+            });
             services.AddDbContext<YoungMovContext>(config => config.UseSqlServer(Configuration.GetConnectionString("SmartCity")));
             services.AddTransient<DataAccess>();
+            services.AddTransient<UserManager<IdentityUser>>();
+            services.AddTransient<SignInManager<IdentityUser>>();
             AutoMapper.Mapper.Initialize(config => config.AddProfile<Infrastructure.MappingProfile>());
             services.AddAutoMapper();
             services.AddCors();
@@ -80,6 +90,7 @@ namespace api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+                c.CustomSchemaIds(x => x.FullName);
             });
             
             services.AddMvc(options =>
@@ -93,7 +104,7 @@ namespace api
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
             }
             else
             {
@@ -105,6 +116,8 @@ namespace api
                                         .AllowAnyHeader()
                                         .AllowAnyMethod()
                                         .AllowCredentials();});
+            
+            app.UseAuthentication();
 
             app.UseSwaggerUI(c =>
             {

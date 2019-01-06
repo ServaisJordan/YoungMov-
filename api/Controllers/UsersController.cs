@@ -9,25 +9,22 @@ using DAO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using DAL;
+using Microsoft.AspNetCore.Identity;
 
 namespace api.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController : BaseController
     {
-        private readonly Dao dao;
-        private readonly IMapper mapper;
-
-        public UsersController(IMapper mapper, DataAccess dal)
-        {
-            this.mapper = mapper;
-            this.dao = dal;
-        }
+        public UsersController(UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper, DataAccess dal) :
+            base(userManager, signInManager, mapper, dal)
+        { }
         // GET api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> Get(int pageSize = 10, int pageIndex = 0, string userNameFilter = null) {
+        public async Task<ActionResult<IEnumerable<UserDTO>>> Get(int pageSize = 10, int pageIndex = 0, string userNameFilter = null)
+        {
             IEnumerable<User> users = await dao.GetUsers(pageSize, pageIndex, userNameFilter);
             IEnumerable<UserDTO> usersDTO = users.Select(mapper.Map<UserDTO>);
             return Ok(usersDTO);
@@ -35,43 +32,51 @@ namespace api.Controllers
 
         // GET api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserDTO>> Get(int id)
+        public async Task<ActionResult<UserDTO>> Get(string id)
         {
-            User user = (User) await dao.GetUser(id);
+            User user = await dao.GetUser(id);
             return Ok(mapper.Map<UserDTO>(user));
         }
 
 
-        [HttpGet("{userName}")]
+        /* [HttpGet("{userName}")]
         public async Task<ActionResult<UserDTO>> Get(string userName) {
             User user = (User) await dao.GetUser(userName);
             return Ok(mapper.Map<UserDTO>(user));
-        }
+        } */
 
         // POST api/Users
-        [AllowAnonymous]
         [HttpPost]
-        public IActionResult Post([FromBody] UserDTORegistration userDTO)
+        public async Task<IActionResult> Post([FromBody] UserDTORegistration userDTO)
         {
-            User user = dao.AddUser(mapper.Map<User>(userDTO));
-            return Created("api/Users/"+user.Id, mapper.Map<UserDTO>(user));
+            User currentUser = await GetCurrentUserAsync();
+            if (currentUser.Role != "backoffice") return Unauthorized();
+            User userRegistratiuon = mapper.Map<User>(userDTO);
+            await userManager.CreateAsync(userRegistratiuon, userDTO.Password);
+            User user = await dao.AddUser(mapper.Map<User>(userDTO));
+            return Created("api/Users/" + user.Id, mapper.Map<UserDTO>(user));
         }
 
         // PUT api/Users/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<UserDTO>> Put(int id, [FromBody] UserDTO userDTO)
+        public async Task<ActionResult<UserDTO>> Put(string id, [FromBody] UserDTO userDTO)
         {
+            User currentUser = await GetCurrentUserAsync();
             User userModel = await dao.GetUser(id);
             if (userModel == null) return NotFound();
-            User user = dao.SetUser(mapper.Map(userDTO, userModel));
+            if (currentUser.Role == "client" && userModel.Id != currentUser.Id) return Unauthorized();
+            User user = await dao.SetUser(mapper.Map(userDTO, userModel), userDTO.Timestamp);
             return Ok(mapper.Map<UserDTO>(user));
         }
 
         // DELETE api/Users/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
-            await dao.RemoveUser(id);
+            User currentUser = await GetCurrentUserAsync();
+            User user = await dao.GetUser(id);
+            if (currentUser.Role == "client" && currentUser.Id != user.Id) return Unauthorized();
+            await dao.RemoveUser(user);
             return Ok();
         }
     }

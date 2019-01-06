@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using DTO;
+using DTO.UserControllerDTO;
 using model;
 using DAO;
 using DAL;
+using Microsoft.AspNetCore.Identity;
+using System.Linq;
+using AutoMapper;
 
 namespace api.Controllers
 {
@@ -16,33 +19,58 @@ namespace api.Controllers
     // Ce controller est accessible même aux utilisateurs non identifiés
     // En effet, ces derniers doivent pouvoir demander un token!
     [AllowAnonymous]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[Action]")]
     [ApiController]
-    public class JwtController : ControllerBase
+    public class JwtController : BaseController
     {
-        private readonly Dao dao;
         private readonly JwtIssuerOptions _jwtOptions;
-        public JwtController(IOptions<JwtIssuerOptions> jwtOptions, DataAccess dal)
+
+        public JwtController(UserManager<User> userManager, SignInManager<User> signInManager, IOptions<JwtIssuerOptions> jwtOptions, IMapper mapper, DataAccess dal) :
+            base(userManager, signInManager, mapper, dal)
         {
-            _jwtOptions=jwtOptions.Value;
-            this.dao = dal;
+            _jwtOptions = jwtOptions.Value;
         }
 
         // POST api/Jwt
         [HttpPost]
         public async Task<ActionResult> Login([FromBody] LoginModel loginModel)
         {
-            User userFound = await dao.GetUser(loginModel.UserName, loginModel.Password, loginModel.Role);
-            if (userFound == null)
-                return Unauthorized();
 
-            var claims = new[]
+            var result = await signInManager.PasswordSignInAsync(loginModel.UserName, loginModel.Password, false, false);
+            if (result.Succeeded)
             {
-                new Claim(JwtRegisteredClaimNames.Sub, userFound.UserName),
+                var appUser = userManager.Users.SingleOrDefault(r => r.UserName == loginModel.UserName);
+                return Ok(await GenerateJwtToken(appUser));
+            }
+            return Unauthorized();
+        }
+
+        public async Task<object> Register([FromBody] UserDTORegistration userRegistration)
+        {
+            var user = mapper.Map<User>(userRegistration);
+            var result = await userManager.CreateAsync(user, userRegistration.Password);
+            if (result.Succeeded)
+            {
+                await signInManager.SignInAsync(user, false);
+                return Ok(await GenerateJwtToken(user));
+            }
+            throw new ApplicationException("UNKNOW_ERROR");
+        }
+
+        private static long ToUnixEpochDate(DateTime date)
+              => (long)Math.Round((date.ToUniversalTime() -
+                                   new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero))
+                                  .TotalSeconds);
+
+        private async Task<Object> GenerateJwtToken(IdentityUser user)
+        {
+            var claims = new[]
+           {
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, await _jwtOptions.JtiGenerator()),
                 new Claim(JwtRegisteredClaimNames.Iat,
                         ToUnixEpochDate(_jwtOptions.IssuedAt).ToString(),
-                        ClaimValueTypes.Integer64),
+                        ClaimValueTypes.Integer64)
             };
             //IEnumerable<string> roles = await _userManager.GetRolesAsync(user);
 
@@ -60,14 +88,11 @@ namespace api.Controllers
             var response = new
             {
                 access_token = encodedJwt,
-                expires_in = (int)_jwtOptions.ValidFor.TotalSeconds
+                expires_in = (int)_jwtOptions.ValidFor.TotalSeconds,
+                userId = user.Id
             };
-            return Ok(response);
+            return response;
         }
-        private static long ToUnixEpochDate(DateTime date)
-              => (long)Math.Round((date.ToUniversalTime() -
-                                   new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero))
-                                  .TotalSeconds);
     }
 
 }

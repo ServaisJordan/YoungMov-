@@ -6,7 +6,7 @@ drop table trusted_carpooling_driver;
 drop table [user];
 
 
-create table [User] (
+/* create table [User] (
 	id int identity(1,1) primary key,
 	[password] varchar(250) not null,
 	userName varchar(250) unique not null,
@@ -79,8 +79,8 @@ create table private_message (
 	created_at datetime not null constraint Private_message_Date_creation default getDate(),
 	creator int foreign key references [user](id) not null,
 	reponse int foreign key references private_message(id));
-
-go
+ */
+/* go
 CREATE TRIGGER TR_User_Modification
 	ON dbo.[User]
 AFTER UPDATE
@@ -146,8 +146,8 @@ BEGIN
 	from dbo.trusted_carpooling_driver t
 	join inserted new on new.[User] = t.[User] and new.carpooler = t.carpooler
 END
-go
-
+go */
+/* 
 delete from carpooling_applicant;
 delete from carpooling;
 delete from private_message;
@@ -174,6 +174,15 @@ insert into dbo.carpooling (nb_places, place_price, destination_from, destinatio
 );
 
 insert into dbo.[User] ([role], [password], userName, email, gender, locality, postalCode) values(
+	'client',
+	'1234',
+	'Romain',
+	'Romain@hotmail.be',
+	'm',
+	'inconnu',
+	'0000');
+
+insert into dbo.[User] ([role], [password], userName, email, gender, locality, postalCode) values(
 	'backoffice',
 	'456',
 	'dylan',
@@ -193,4 +202,4 @@ insert into dbo.[User] ([role], [password], userName, email, gender, locality, p
 	'Daniellyson@hotmail.be',
 	'm',
 	'inconnu',
-	'0000');
+	'0000'); */

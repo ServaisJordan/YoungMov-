@@ -6,23 +6,24 @@ using DAO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using DAL;
+using Microsoft.AspNetCore.Identity;
+using model;
 
-namespace api
+namespace api.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
-    public class NbUsers : ControllerBase {
-        private readonly IMapper mapper;
-        private readonly Dao dao;
+    public class NbUsers : BaseController
+    {
 
-        public NbUsers(IMapper mapper, DataAccess dal) {
-            this.mapper = mapper;
-            this.dao = dal;
-        }
+        public NbUsers(UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper, DataAccess dal) : base(userManager, signInManager, mapper, dal) { }
 
         [HttpGet]
-        public async Task<ActionResult<int>> Get(DateTime ?date = null, char ?gender = null) {
+        public async Task<ActionResult<int>> Get(DateTime? date = null, char? gender = null)
+        {
+            User user = await GetCurrentUserAsync();
+            if (user.Role != "backoffice") return Unauthorized();
             return Ok(await dao.GetNumberOfUsers(date, gender));
         }
     }

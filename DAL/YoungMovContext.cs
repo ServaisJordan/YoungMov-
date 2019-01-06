@@ -2,10 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using model;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace DAL
 {
-    public partial class YoungMovContext : DbContext
+    public partial class YoungMovContext : IdentityDbContext<User>
     {
         public YoungMovContext()
         {
@@ -27,12 +28,12 @@ namespace DAL
         {
             if (!optionsBuilder.IsConfigured)
             {
-                throw new Exception("use the constructor with dbcontextoption !!!");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Car>(entity =>
             {
                 entity.ToTable("car");
@@ -227,18 +228,13 @@ namespace DAL
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Carpooler).HasColumnName("carpooler");
+                entity.Property(e => e.Carpooler).HasColumnName("carpooler").IsRequired();
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.Timestamp)
-                    .IsRequired()
-                    .HasColumnName("timestamp")
-                    .IsRowVersion();
-
-                entity.Property(e => e.User).HasColumnName("user");
+                entity.Property(e => e.User).HasColumnName("user").IsRequired();
 
                 entity.HasOne(d => d.CarpoolerNavigation)
                     .WithMany(p => p.TrustedCarpoolingDriverCarpoolerNavigation)
@@ -319,12 +315,6 @@ namespace DAL
                 entity.Property(e => e.Locality)
                     .IsRequired()
                     .HasColumnName("locality")
-                    .HasMaxLength(250)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Password)
-                    .IsRequired()
-                    .HasColumnName("password")
                     .HasMaxLength(250)
                     .IsUnicode(false);
 

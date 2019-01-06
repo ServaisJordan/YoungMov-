@@ -9,23 +9,20 @@ using DAO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using DAL;
+using Microsoft.AspNetCore.Identity;
 
 namespace api.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
-    public class TrustedCarpoolingDriversContoller : ControllerBase
+    public class TrustedCarpoolingContoller : BaseController
     {
-        private readonly Dao dao;
-        private readonly IMapper mapper;
-        public TrustedCarpoolingDriversContoller(IMapper mapper, DataAccess dal)
-        {
-            this.mapper = mapper;
-            dao = dal;
-        }
+        public TrustedCarpoolingContoller(UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper, DataAccess dal) :
+            base(userManager, signInManager, mapper, dal)
+        { }
 
-        
+
         [HttpGet("{id}")]
         public async Task<ActionResult<TrustedCarpoolingDriverDTO>> Get(int id)
         {
@@ -34,18 +31,21 @@ namespace api.Controllers
             return Ok(mapper.Map<TrustedCarpoolingDriverDTO>(trustedCarpoolingDriver));
         }
 
-        
+
         [HttpPost]
         public async Task<ActionResult<TrustedCarpoolingDriverDTO>> Post([FromBody] TrustedCarpoolingDriverDTO trustedCarpoolingDriverDTO)
         {
             TrustedCarpoolingDriver trustedCarpoolingDriver = await dao.AddTrustedCarpoolingDriver(mapper.Map<TrustedCarpoolingDriver>(trustedCarpoolingDriverDTO));
-            return Created("api/Cars/"+trustedCarpoolingDriver.Id, mapper.Map<TrustedCarpoolingDriverDTO>(trustedCarpoolingDriver));
+            return Created("api/Cars/" + trustedCarpoolingDriver.Id, mapper.Map<TrustedCarpoolingDriverDTO>(trustedCarpoolingDriver));
         }
-        
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            await dao.RemoveTrustedCarpoolingDriver(id);
+            User user = await GetCurrentUserAsync();
+            TrustedCarpoolingDriver trustedCarpoolingDriver = await dao.GetTrustedCarpoolingDriver(id);
+            if (user.UserName == "client" && user.Id == trustedCarpoolingDriver.User)
+            await dao.RemoveTrustedCarpoolingDriver(trustedCarpoolingDriver);
             return Ok();
         }
     }

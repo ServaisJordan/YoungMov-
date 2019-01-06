@@ -13,25 +13,24 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using DAO;
 using DAL;
+using Microsoft.AspNetCore.Identity;
+using Exceptions;
+
 
 namespace api.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
-    public class CarpoolingsController : ControllerBase
+    public class CarpoolingsController : BaseController
     {
-        private readonly Dao dao;
-        private readonly IMapper mapper;
-
-        public CarpoolingsController(IMapper mapper, DataAccess dal)
-        {
-            this.mapper = mapper;
-            this.dao = dal;
-        }
+        public CarpoolingsController(UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper, DataAccess dal) :
+            base(userManager, signInManager, mapper, dal)
+        { }
         // GET api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CarpoolingDTO>>> Get(int pageSize = 10, int pageIndex = 0, string filterFrom = null, string filterTo = null) {
+        public async Task<ActionResult<IEnumerable<CarpoolingDTO>>> Get(int pageSize = 10, int pageIndex = 0, string filterFrom = null, string filterTo = null)
+        {
             IEnumerable<Carpooling> carpoolings = await dao.GetCarpoolings(pageSize, pageIndex, filterFrom, filterTo);
             IEnumerable<CarpoolingDTO> carpoolingsDTO = carpoolings.Select(mapper.Map<CarpoolingDTO>);
             return Ok(carpoolingsDTO);
@@ -47,19 +46,24 @@ namespace api.Controllers
 
         // POST api/Users
         [HttpPost]
-        public IActionResult Post([FromBody] CarpoolingDTO carpoolingDTO)
+        public async Task<IActionResult> Post([FromBody] CarpoolingDTO carpoolingDTO)
         {
-            Carpooling carpooling = dao.AddCarpooling(mapper.Map<Carpooling>(carpoolingDTO));
-            return Created("api/Users/"+carpooling.Id, mapper.Map<CarpoolingDTO>(carpooling));
+            var user = await GetCurrentUserAsync();
+            if (user.Role == "client" && carpoolingDTO.Creator != user.Id) return Unauthorized();
+            Carpooling carpooling = await dao.AddCarpooling(mapper.Map<Carpooling>(carpoolingDTO));
+            return Created("api/Users/" + carpooling.Id, mapper.Map<CarpoolingDTO>(carpooling));
         }
 
         // PUT api/Users/5
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDTO>> Put(int id, [FromBody] CarpoolingDTO carpoolingDTO)
         {
+            var user = await GetCurrentUserAsync();
+            if (user.Car.SingleOrDefault(c => c.Id == carpoolingDTO.Car) == null) throw new NotOwnerException(user.UserName+"is not the owner of this car");
             Carpooling carpoolingModel = await dao.GetCarpooling(id);
             if (carpoolingModel == null) return NotFound();
-            Carpooling carpooling = dao.SetCarpooling(mapper.Map(carpoolingDTO, carpoolingModel));
+            if (user.Role == "client" && carpoolingModel.Creator != user.Id) return Unauthorized();
+            Carpooling carpooling = await dao.SetCarpooling(mapper.Map(carpoolingDTO, carpoolingModel), carpoolingDTO.Timestamp);
             return Ok(mapper.Map<CarpoolingDTO>(carpooling));
         }
 
@@ -67,7 +71,10 @@ namespace api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await dao.RemoveCarpooling(id);
+            Carpooling carpooling = await dao.GetCarpooling(id);
+            var user = await GetCurrentUserAsync();
+            if (user.Role == "client" && carpooling.Creator != user.Id) return Unauthorized();
+            await dao.RemoveCarpooling(carpooling);
             return Ok();
         }
     }

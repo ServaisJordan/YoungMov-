@@ -12,7 +12,8 @@ namespace api.Infrastructure {
                                                             .ForMember(u => u.CarpoolingApplicant, opt => opt.Ignore())
                                                             .ForMember(u => u.CreatedAt, opt => opt.Ignore())
                                                             .ForMember(u => u.UpdatedAt, opt => opt.Ignore())
-                                                            .ForMember(u => u.TrustedCarpoolingDriverUserNavigation, opt => opt.Ignore());
+                                                            .ForMember(u => u.TrustedCarpoolingDriverUserNavigation, opt => opt.Ignore())
+                                                            .ForMember(u => u.Timestamp, opt => opt.Ignore());
             CreateMap<User, DTO.UserControllerDTO.UserDTORegistration>().ReverseMap();
             CreateMap<Car, DTO.UserControllerDTO.CarDTO>().ReverseMap();
             CreateMap<Carpooling, DTO.UserControllerDTO.CarpoolingDTO>().ReverseMap();
@@ -27,7 +28,8 @@ namespace api.Infrastructure {
                                                                             .ForMember(c => c.CarNavigation, opt => opt.Ignore())
                                                                             .ForMember(c => c.CreatedAt, opt => opt.Ignore())
                                                                             .ForMember(c => c.UpdatedAt, opt => opt.Ignore())
-                                                                            .ForMember(c => c.CreatorNavigation, opt => opt.Ignore());
+                                                                            .ForMember(c => c.CreatorNavigation, opt => opt.Ignore())
+                                                                            .ForMember(c => c.Timestamp, opt => opt.Ignore());
 
             CreateMap<User, DTO.CarControllerDTO.UserDTO>().ReverseMap();
             CreateMap<Car, DTO.CarControllerDTO.UserDTO>();

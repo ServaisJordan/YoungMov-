@@ -18,7 +18,7 @@ namespace DTO.Global
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string TrustedCarpoolingDriverCode { get; set; }
-        public int Id { get; set; }
+        public string Id { get; set; }
         public byte[] Timestamp { get; set; }
     }
 }

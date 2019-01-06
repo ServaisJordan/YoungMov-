@@ -24,13 +24,13 @@ namespace DAL
                                     .ToListAsync();
         }
 
-        public async Task<User> GetUser(int id) {
-            return await IncludeQuery().FirstOrDefaultAsync(u => u.Id == id);
+        public async Task<User> GetUser(string id) {
+            return await IncludeQuery().FirstOrDefaultAsync(u => u.Id == id.ToString());
         }
 
-        public async Task<User> GetUser(string userName) {
+        /* public async Task<User> GetUser(string userName) {
             return await IncludeQuery().FirstOrDefaultAsync(u => u.UserName == userName);
-        }
+        } */
 
         public Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<User, ICollection<Car>> IncludeQuery() {
             return context.User.Include(user => user.Carpooling).ThenInclude(c => c.CarNavigation)
@@ -43,37 +43,35 @@ namespace DAL
         public async Task<User> GetUser(string userName, string password, string role) {
             return await context.User.Select(u => new User() {
                 UserName = u.UserName,
-                Password = u.Password,
+                PasswordHash = u.PasswordHash,
                 Role = u.Role
-            }).FirstOrDefaultAsync(user => user.UserName == userName && user.Password == password && user.Role == role);
+            }).FirstOrDefaultAsync(user => user.UserName == userName && user.PasswordHash == password && user.Role == role);
         }
 
 
-        public User AddUser(User user) {
-            context.User.Add(user);
-            context.SaveChanges();
+        public async Task<User> AddUser(User user) {
+            await context.User.AddAsync(user);
+            await context.SaveChangesAsync();
             return user;
         }
 
 
-        public User SetUser(User user) {
-            
+        public async Task<User> SetUser(User user, byte[] timestamp) {
+            context.Entry(user).OriginalValues["Timestamp"] = timestamp;
             if (context.Entry(user).State == EntityState.Detached)
             {
                 context.Attach(user).State = EntityState.Modified;
             }
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
             return user;
         }
 
 
-        public async Task RemoveUser(int id) {
-            User user = await context.User.Include(u => u.Car).Include(u => u.Carpooling).ThenInclude(c => c.CarpoolingApplicant).FirstOrDefaultAsync(u => u.Id == id);
-            if (user != null) {
-                context.User.Remove(user);
-                context.SaveChanges();
-            }
+        public async Task RemoveUser(User user) {
+            
+            context.User.Remove(user);
+            await context.SaveChangesAsync();
         }
         #endregion User
 
@@ -83,6 +81,7 @@ namespace DAL
                                 .Take(pageSize)
                                 .Where(c => filterFrom == null || c.LocalityFrom.Contains(filterFrom))
                                 .Where(c => filterTo == null || c.LocalityTo.Contains(filterTo))
+                                .Include(c => c.CreatorNavigation)
                                 .ToListAsync();
 
         public async Task<Carpooling> GetCarpooling(int id) =>
@@ -91,25 +90,23 @@ namespace DAL
                                     .Include(c => c.Car)
                                     .FirstOrDefaultAsync(c => c.Id == id);
 
-        public Carpooling AddCarpooling(Carpooling carpooling) {
-            context.Carpooling.Add(carpooling);
-            context.SaveChanges();
+        public async Task<Carpooling> AddCarpooling(Carpooling carpooling) {
+            await context.Carpooling.AddAsync(carpooling);
+            await context.SaveChangesAsync();
             return carpooling;
         }
 
-        public Carpooling SetCarpooling(Carpooling carpooling) {
+        public async Task<Carpooling> SetCarpooling(Carpooling carpooling, byte[] timestamp) {
+            context.Entry(carpooling).OriginalValues["Timestamp"] = timestamp;
             if (context.Entry(carpooling).State == EntityState.Detached) {
                 context.Attach(carpooling).State = EntityState.Modified;
             }
-            context.SaveChanges();
+            await context.SaveChangesAsync();
             return carpooling;
         }
-        public async Task RemoveCarpooling(int id) {
-            Carpooling carpooling = await GetCarpooling(id);
-            if (carpooling != null) {
-                context.Remove(carpooling);
-                await context.SaveChangesAsync();
-            }
+        public async Task RemoveCarpooling(Carpooling carpooling) {
+            context.Remove(carpooling);
+            await context.SaveChangesAsync();
         }
         #endregion Carpooling
 
@@ -124,7 +121,6 @@ namespace DAL
 
 
         #region Car
-
         public async Task<ICollection<Car>> GetCars(int pageIndex , int pageSize) {
             return await context.Car.Skip(pageIndex * pageSize)
                                     .Take(pageSize)
@@ -147,8 +143,7 @@ namespace DAL
             return car;
         }
 
-        public async Task RemoveCar(int id) {
-            Car car = await GetCar(id);
+        public async Task RemoveCar(Car car) {
             context.Car.Remove(car);
             await context.SaveChangesAsync();
         }
@@ -180,8 +175,8 @@ namespace DAL
             return privateMessage;
         }
 
-        public async Task RemovePrivateMessage(int id) {
-            context.PrivateMessage.Remove(await GetPrivateMessage(id));
+        public async Task RemovePrivateMessage(PrivateMessage privateMessage) {
+            context.PrivateMessage.Remove(privateMessage);
             await context.SaveChangesAsync();
         }
         #endregion PrivateMessage
@@ -197,8 +192,8 @@ namespace DAL
             return trustedCarpoolingDriver;
         }
 
-        public async Task RemoveTrustedCarpoolingDriver(int id) {
-            context.TrustedCarpoolingDriver.Remove(await GetTrustedCarpoolingDriver(id));
+        public async Task RemoveTrustedCarpoolingDriver(TrustedCarpoolingDriver trustedCarpooling) {
+            context.TrustedCarpoolingDriver.Remove(trustedCarpooling);
             await context.SaveChangesAsync();
         }
         #endregion TrustedCarpoolingDriver
@@ -215,8 +210,16 @@ namespace DAL
             return carpoolingApplicant;
         }
 
-        public async Task RemoveCarpoolingApplicant(int id) {
-            context.CarpoolingApplicant.Remove(await GetCarpoolingApplicant(id));
+        public async Task<CarpoolingApplicant> SetCarpoolingApplicant(CarpoolingApplicant carpoolingApplicant) {
+            if (context.Entry(carpoolingApplicant).State == EntityState.Detached) {
+                context.Attach(carpoolingApplicant).State = EntityState.Modified;
+            }
+            await context.SaveChangesAsync();
+            return carpoolingApplicant;
+        }
+
+        public async Task RemoveCarpoolingApplicant(CarpoolingApplicant carpoolingApplicant) {
+            context.CarpoolingApplicant.Remove(carpoolingApplicant);
             await context.SaveChangesAsync();
         }
         #endregion CarpoolingApplicant

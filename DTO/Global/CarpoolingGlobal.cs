@@ -7,7 +7,7 @@ namespace DTO.Global {
         public int NbPlaces { get; set; }
         public decimal PlacePrice { get; set; }
         public int Car { get; set; }
-        public int Creator { get; set; }
+        public string Creator { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string DestinationFrom { get; set; }

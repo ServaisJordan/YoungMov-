@@ -23,7 +23,7 @@ namespace model
         public string PostalCodeTo { get; set; }
         public string PostalCodeFrom { get; set; }
         public int Car { get; set; }
-        public int Creator { get; set; }
+        public string Creator { get; set; }
         public byte[] Timestamp { get; set; }
 
         public Car CarNavigation { get; set; }

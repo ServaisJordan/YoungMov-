@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace model
 {
-    public partial class User
+    public partial class User : IdentityUser
     {
         public User()
         {
@@ -15,11 +16,7 @@ namespace model
             TrustedCarpoolingDriverUserNavigation = new HashSet<TrustedCarpoolingDriver>();
         }
 
-        public int Id { get; set; }
-        public string Password { get; set; }
-        public string UserName { get; set; }
         public string Role { get; set; }
-        public string Email { get; set; }
         public DateTime? EmailValidatedAt { get; set; }
         public string Gender { get; set; }
         public string Adresse { get; set; }
