@@ -1,7 +1,7 @@
 using System;
 
 namespace Exceptions {
-    public class JoiningHisOwnCarpoolingException : Exception {
+    public class JoiningHisOwnCarpoolingException : BusinessException {
         public JoiningHisOwnCarpoolingException(string errorMessage) : base(errorMessage) {}
     }
 }

@@ -17,11 +17,10 @@ namespace DAL
         }
 
         #region User
-        public async Task<IEnumerable<User>> GetUsers(int pageSize, int pageIndex, string userNameFilter) {
-            return await context.User.Skip(pageSize*pageIndex)
-                                    .Take(pageSize)
-                                    .Where(u => userNameFilter == null || u.UserName.Contains(userNameFilter))
-                                    .ToListAsync();
+        public async Task<IEnumerable<User>> GetUsers(int? pageSize, int pageIndex, string userNameFilter) {
+            var query = context.User.Where(u => userNameFilter == null || u.UserName.Contains(userNameFilter));
+            if (pageSize != null) query.Skip((int) pageSize * pageIndex).Take((int)pageSize);
+            return await query.ToListAsync();
         }
 
         public async Task<User> GetUser(string id) {
@@ -76,13 +75,14 @@ namespace DAL
         #endregion User
 
         #region Carpooling
-        public async Task<IEnumerable<Carpooling>> GetCarpoolings(int pageSize, int pageIndex, string filterFrom, string filterTo) => 
-        await context.Carpooling.Skip(pageSize * pageIndex)
-                                .Take(pageSize)
-                                .Where(c => filterFrom == null || c.LocalityFrom.Contains(filterFrom))
-                                .Where(c => filterTo == null || c.LocalityTo.Contains(filterTo))
-                                .Include(c => c.CreatorNavigation)
-                                .ToListAsync();
+        public async Task<IEnumerable<Carpooling>> GetCarpoolings(int? pageSize, int pageIndex, string filterFrom, string filterTo) {
+            var query = context.Carpooling.Where(c => filterFrom == null || c.LocalityFrom.Contains(filterFrom))
+                                        .Where(c => filterTo == null || c.LocalityTo.Contains(filterTo))
+                                        .Include(c => c.CreatorNavigation);
+            if (pageSize != null) query.Skip((int)pageSize * pageIndex).Take((int) pageSize);
+            return await query.ToListAsync();
+
+        }
 
         public async Task<Carpooling> GetCarpooling(int id) =>
              await context.Carpooling.Include(c => c.Creator)
@@ -121,10 +121,10 @@ namespace DAL
 
 
         #region Car
-        public async Task<ICollection<Car>> GetCars(int pageIndex , int pageSize) {
-            return await context.Car.Skip(pageIndex * pageSize)
-                                    .Take(pageSize)
-                                    .ToListAsync();
+        public async Task<ICollection<Car>> GetCars(int pageIndex , int? pageSize) {
+            var query = context.Car;
+            if (pageSize != null) query.Skip((int) pageSize * pageIndex).Take(((int) pageSize));
+            return await query.ToListAsync();
         }
         public async Task<Car> GetCar(int id) {
             return await context.Car.Include(c => c.OwnerNavigation)
@@ -151,10 +151,10 @@ namespace DAL
 
 
         #region PrivateMessage
-        public async Task<ICollection<PrivateMessage>> GetPrivateMessages(int pageIndex, int pageSize) {
-            return await context.PrivateMessage.Skip(pageIndex * pageSize)
-                                            .Take(pageSize)
-                                            .ToListAsync();
+        public async Task<ICollection<PrivateMessage>> GetPrivateMessages(int pageIndex, int? pageSize) {
+            var query = context.PrivateMessage;
+            if (pageSize != null) query.Skip((int) pageSize * pageIndex).Take((int) pageSize);
+            return await query.ToListAsync();
         }
 
         public async Task<PrivateMessage> GetPrivateMessage(int id) {

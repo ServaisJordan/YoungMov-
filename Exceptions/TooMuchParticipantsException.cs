@@ -1,7 +1,7 @@
 using System;
 
 namespace Exceptions {
-    public class TooMuchParticipantsException : Exception {
+    public class TooMuchParticipantsException : BusinessException {
         public TooMuchParticipantsException(string ErrorMessage) : base(ErrorMessage) {}
     }
 }

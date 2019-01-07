@@ -23,7 +23,7 @@ namespace api.Controllers
         { }
         // GET api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> Get(int pageSize = 10, int pageIndex = 0, string userNameFilter = null)
+        public async Task<ActionResult<IEnumerable<UserDTO>>> Get(int? pageSize = null, int pageIndex = 0, string userNameFilter = null)
         {
             IEnumerable<User> users = await dao.GetUsers(pageSize, pageIndex, userNameFilter);
             IEnumerable<UserDTO> usersDTO = users.Select(mapper.Map<UserDTO>);
@@ -49,6 +49,7 @@ namespace api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] UserDTORegistration userDTO)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState.ToArray());
             User currentUser = await GetCurrentUserAsync();
             if (currentUser.Role != "backoffice") return Unauthorized();
             User userRegistratiuon = mapper.Map<User>(userDTO);
@@ -61,6 +62,7 @@ namespace api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDTO>> Put(string id, [FromBody] UserDTO userDTO)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             User currentUser = await GetCurrentUserAsync();
             User userModel = await dao.GetUser(id);
             if (userModel == null) return NotFound();

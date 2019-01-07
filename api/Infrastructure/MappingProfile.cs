@@ -34,6 +34,7 @@ namespace api.Infrastructure {
             CreateMap<User, DTO.CarControllerDTO.UserDTO>().ReverseMap();
             CreateMap<Car, DTO.CarControllerDTO.UserDTO>();
             CreateMap<DTO.CarControllerDTO.CarDTO, Car>().ForMember(c => c.CreatedAt, opt => opt.Ignore())
+                                                        .ForMember(c => c.ValidatedAt, opt => opt.Ignore())
                                                         .ForMember(c => c.OwnerNavigation, opt => opt.Ignore())
                                                         .ForMember(c => c.Carpooling, opt => opt.Ignore());
 

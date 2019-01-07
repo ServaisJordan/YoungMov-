@@ -2,7 +2,7 @@
 
 namespace Exceptions
 {
-    public class NotOwnerException : Exception
+    public class NotOwnerException : BusinessException
     {
         public string ErrorMessage { get; set; }
         public NotOwnerException(string errorMessage) : base(errorMessage) {

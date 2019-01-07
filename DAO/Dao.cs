@@ -8,7 +8,7 @@ namespace DAO
     public interface Dao
     {
         #region User
-        Task<IEnumerable<User>> GetUsers(int pageSize, int pageIndex, string filter);
+        Task<IEnumerable<User>> GetUsers(int? pageSize, int pageIndex, string filter);
         Task<User> GetUser(string id);
         //Task<User> GetUser(string userName);
         Task<User> GetUser(string userName, string password, string role);
@@ -18,7 +18,7 @@ namespace DAO
         #endregion
 
         #region Carpooling
-        Task<IEnumerable<Carpooling>> GetCarpoolings(int pageSize, int pageIndex, string filterFrom, string filterTo);
+        Task<IEnumerable<Carpooling>> GetCarpoolings(int? pageSize, int pageIndex, string filterFrom, string filterTo);
         Task<Carpooling> GetCarpooling(int id);
         Task<Carpooling> AddCarpooling(Carpooling carpooling);
         Task<Carpooling> SetCarpooling(Carpooling carpooling, byte[] timestamp);
@@ -30,7 +30,7 @@ namespace DAO
         #endregion
 
         #region Car
-        Task<ICollection<Car>> GetCars(int pageIndex, int pageSize);
+        Task<ICollection<Car>> GetCars(int pageIndex, int? pageSize);
         Task<Car> GetCar(int id);
         Task<Car> AddCar(Car car);
         Task<Car> SetCar(Car car);
@@ -38,7 +38,7 @@ namespace DAO
         #endregion
 
         #region PrivateMessage
-        Task<ICollection<PrivateMessage>> GetPrivateMessages(int pageIndex, int pageSize);
+        Task<ICollection<PrivateMessage>> GetPrivateMessages(int pageIndex, int? pageSize);
         Task<PrivateMessage> GetPrivateMessage(int id);
         Task<PrivateMessage> AddPrivateMessage(PrivateMessage privateMessage);
         Task<PrivateMessage> SetPrivateMessage(PrivateMessage privateMessage);

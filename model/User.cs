@@ -19,7 +19,7 @@ namespace model
         public string Role { get; set; }
         public DateTime? EmailValidatedAt { get; set; }
         public string Gender { get; set; }
-        public string Adresse { get; set; }
+        public string Address { get; set; }
         public string FacePhotoFilename { get; set; }
         public DateTime? FacePhotoSentAt { get; set; }
         public DateTime? FacePhotoValidatedAt { get; set; }

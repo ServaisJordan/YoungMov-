@@ -29,7 +29,7 @@ namespace api.Controllers
         { }
         // GET api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CarpoolingDTO>>> Get(int pageSize = 10, int pageIndex = 0, string filterFrom = null, string filterTo = null)
+        public async Task<ActionResult<IEnumerable<CarpoolingDTO>>> Get(int? pageSize = null, int pageIndex = 0, string filterFrom = null, string filterTo = null)
         {
             IEnumerable<Carpooling> carpoolings = await dao.GetCarpoolings(pageSize, pageIndex, filterFrom, filterTo);
             IEnumerable<CarpoolingDTO> carpoolingsDTO = carpoolings.Select(mapper.Map<CarpoolingDTO>);
@@ -41,6 +41,7 @@ namespace api.Controllers
         public async Task<ActionResult<CarpoolingDTO>> Get(int id)
         {
             Carpooling carpooling = await dao.GetCarpooling(id);
+            if (carpooling == null) return NotFound(id);
             return Ok(mapper.Map<CarpoolingDTO>(carpooling));
         }
 
@@ -48,6 +49,7 @@ namespace api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CarpoolingDTO carpoolingDTO)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var user = await GetCurrentUserAsync();
             if (user.Role == "client" && carpoolingDTO.Creator != user.Id) return Unauthorized();
             Carpooling carpooling = await dao.AddCarpooling(mapper.Map<Carpooling>(carpoolingDTO));
@@ -58,6 +60,7 @@ namespace api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDTO>> Put(int id, [FromBody] CarpoolingDTO carpoolingDTO)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var user = await GetCurrentUserAsync();
             if (user.Car.SingleOrDefault(c => c.Id == carpoolingDTO.Car) == null) throw new NotOwnerException(user.UserName+"is not the owner of this car");
             Carpooling carpoolingModel = await dao.GetCarpooling(id);

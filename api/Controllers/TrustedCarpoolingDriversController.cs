@@ -16,9 +16,9 @@ namespace api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
-    public class TrustedCarpoolingContoller : BaseController
+    public class TrustedCarpoolingDriversController : BaseController
     {
-        public TrustedCarpoolingContoller(UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper, DataAccess dal) :
+        public TrustedCarpoolingDriversController(UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper, DataAccess dal) :
             base(userManager, signInManager, mapper, dal)
         { }
 

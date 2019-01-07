@@ -24,7 +24,7 @@ namespace api.Controllers
         { }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CarDTO>>> Get(int pageIndex = 0, int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<CarDTO>>> Get(int pageIndex = 0, int? pageSize = null)
         {
             IEnumerable<Car> cars = await dao.GetCars(pageIndex, pageSize);
             IEnumerable<CarDTO> carsDTO = cars.Select(c => mapper.Map<CarDTO>(c));
@@ -44,6 +44,7 @@ namespace api.Controllers
         [HttpPost]
         public async Task<ActionResult<CarDTO>> Post([FromBody] CarDTO carDTO)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             User user = await GetCurrentUserAsync();
             if (user.Role == "client" && user.Id != carDTO.Owner)
                 return Unauthorized();
@@ -68,7 +69,7 @@ namespace api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var user = await userManager.GetUserAsync(User);
+            var user = await GetCurrentUserAsync();
             if (user.Role == "client" && user.Car.SingleOrDefault(c => c.Id == id) == null)
                 return Unauthorized();
             Car car = await dao.GetCar(id);

@@ -23,7 +23,7 @@ namespace api.Controllers
         { }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PrivateMessageDTO>>> Get(int pageIndex = 0, int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<PrivateMessageDTO>>> Get(int pageIndex = 0, int? pageSize = null)
         {
             User user = await GetCurrentUserAsync();
             if (user.Role != "client") return Unauthorized();

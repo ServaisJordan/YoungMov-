@@ -45,6 +45,7 @@ namespace api.Controllers
             return Unauthorized();
         }
 
+        [HttpPost]
         public async Task<object> Register([FromBody] UserDTORegistration userRegistration)
         {
             var user = mapper.Map<User>(userRegistration);

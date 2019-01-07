@@ -66,7 +66,7 @@ namespace DAL
                     .HasMaxLength(250)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Owner).HasColumnName("owner");
+                entity.Property(e => e.Owner).HasColumnName("owner").IsRequired();
 
                 entity.Property(e => e.ValidatedAt)
                     .HasColumnName("validated_at")
@@ -85,13 +85,13 @@ namespace DAL
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Car).HasColumnName("car");
+                entity.Property(e => e.Car).HasColumnName("car").IsRequired();
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.Creator).HasColumnName("creator");
+                entity.Property(e => e.Creator).HasColumnName("creator").IsRequired();
 
                 entity.Property(e => e.Description)
                     .HasColumnName("description")
@@ -149,6 +149,14 @@ namespace DAL
                     .HasColumnName("updated_at")
                     .HasColumnType("datetime");
 
+                entity.Property(e => e.DateStart)
+                    .HasColumnName("date_start")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.DateEnd)
+                    .HasColumnName("date_end")
+                    .HasColumnType("datetime");
+
                 entity.HasOne(d => d.CarNavigation)
                     .WithMany(p => p.Carpooling)
                     .HasForeignKey(d => d.Car)
@@ -171,8 +179,6 @@ namespace DAL
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Carpooling).HasColumnName("carpooling");
-
-                entity.Property(e => e.HasBeenAccepted).HasColumnName("has_been_accepted");
 
                 entity.HasOne(d => d.CarpoolingNavigation)
                     .WithMany(p => p.CarpoolingApplicant)
@@ -204,7 +210,7 @@ namespace DAL
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.Creator).HasColumnName("creator");
+                entity.Property(e => e.Creator).HasColumnName("creator").IsRequired();
 
                 entity.Property(e => e.HasBeenRead).HasColumnName("has_been_read");
 
@@ -261,8 +267,8 @@ namespace DAL
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Adresse)
-                    .HasColumnName("adresse")
+                entity.Property(e => e.Address)
+                    .HasColumnName("address")
                     .HasMaxLength(250)
                     .IsUnicode(false);
 

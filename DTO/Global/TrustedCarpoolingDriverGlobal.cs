@@ -9,6 +9,5 @@ namespace DTO.Global
         public string User { get; set; }
         public string Carpooler { get; set; }
         public DateTime? CreatedAt { get; set; }
-        public byte[] Timestamp { get; set; }
     }
 }

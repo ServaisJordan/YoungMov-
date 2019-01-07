@@ -91,6 +91,7 @@ namespace api
             {
                 c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
                 c.CustomSchemaIds(x => x.FullName);
+                c.CustomOperationIds(x => x.RelativePath);
             });
             
             services.AddMvc(options =>
