@@ -16,6 +16,12 @@
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj" />
     <ProjectReference Include="..\model\model.csproj" />
+    <ProjectReference Include="..\api\api.csproj" />
   </ItemGroup>
+  <ItemGroup>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 
 </Project>

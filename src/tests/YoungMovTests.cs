@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using api;
 
 namespace tests
 {
@@ -22,9 +23,11 @@ namespace tests
         }
         
         [AssemblyInitialize]
-        public void Configure(TestContext context) {
-            configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
-                                                    .AddJsonFile("appsettings.json").Build();
+        public static void Configure(TestContext context) {
+            configuration = new ConfigurationBuilder()
+                                                .SetBasePath(Directory.GetCurrentDirectory())
+                                                .AddJsonFile("appsettings.json")
+                                                .Build();
         }
         
         protected virtual YoungMovContext GetContext() {

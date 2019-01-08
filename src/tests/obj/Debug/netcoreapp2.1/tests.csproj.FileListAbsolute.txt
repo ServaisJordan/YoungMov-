@@ -44,3 +44,7 @@ C:\Users\HP\Desktop\apiSmartCity\src\tests\obj\Debug\netcoreapp2.1\tests.Assembl
 C:\Users\HP\Desktop\apiSmartCity\src\tests\obj\Debug\netcoreapp2.1\tests.csproj.CopyComplete
 C:\Users\HP\Desktop\apiSmartCity\src\tests\obj\Debug\netcoreapp2.1\tests.dll
 C:\Users\HP\Desktop\apiSmartCity\src\tests\obj\Debug\netcoreapp2.1\tests.pdb
+c:\Users\HP\Desktop\apiSmartCity\src\tests\bin\Debug\netcoreapp2.1\api.dll
+c:\Users\HP\Desktop\apiSmartCity\src\tests\bin\Debug\netcoreapp2.1\DTO.dll
+c:\Users\HP\Desktop\apiSmartCity\src\tests\bin\Debug\netcoreapp2.1\api.pdb
+c:\Users\HP\Desktop\apiSmartCity\src\tests\bin\Debug\netcoreapp2.1\DTO.pdb
