@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using DAL;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using DTO;
 
 namespace api.Controllers
 {
@@ -46,7 +47,7 @@ namespace api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             User user = await GetCurrentUserAsync();
-            if (user.Role == "client" && user.Id != carDTO.Owner)
+            if (user.Role == Constants.CLIENT && user.Id != carDTO.Owner)
                 return Unauthorized();
             Car car = await dao.AddCar(mapper.Map<Car>(carDTO));
             return Created("api/Cars/" + car.Id, mapper.Map<CarDTO>(car));
@@ -56,8 +57,9 @@ namespace api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<CarDTO>> Put(int id, [FromBody] CarDTO carDTO)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var user = await GetCurrentUserAsync();
-            if (user.Role == "client" && user.Id != carDTO.Owner)
+            if (user.Role == Constants.CLIENT && user.Id != carDTO.Owner)
                 return Unauthorized();
             Car carModel = await dao.GetCar(id);
             if (carModel == null) return NotFound();
@@ -70,7 +72,7 @@ namespace api.Controllers
         public async Task<ActionResult> Delete(int id)
         {
             var user = await GetCurrentUserAsync();
-            if (user.Role == "client" && user.Car.SingleOrDefault(c => c.Id == id) == null)
+            if (user.Role == Constants.CLIENT && user.Car.SingleOrDefault(c => c.Id == id) == null)
                 return Unauthorized();
             Car car = await dao.GetCar(id);
             await dao.RemoveCar(car);

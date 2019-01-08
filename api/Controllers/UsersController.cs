@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using DAL;
 using Microsoft.AspNetCore.Identity;
+using DTO;
 
 namespace api.Controllers
 {
@@ -51,7 +52,7 @@ namespace api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.ToArray());
             User currentUser = await GetCurrentUserAsync();
-            if (currentUser.Role != "backoffice") return Unauthorized();
+            if (currentUser.Role != Constants.ADMIN) return Unauthorized();
             User userRegistratiuon = mapper.Map<User>(userDTO);
             await userManager.CreateAsync(userRegistratiuon, userDTO.Password);
             User user = await dao.AddUser(mapper.Map<User>(userDTO));
@@ -66,7 +67,7 @@ namespace api.Controllers
             User currentUser = await GetCurrentUserAsync();
             User userModel = await dao.GetUser(id);
             if (userModel == null) return NotFound();
-            if (currentUser.Role == "client" && userModel.Id != currentUser.Id) return Unauthorized();
+            if (currentUser.Role == Constants.CLIENT && userModel.Id != currentUser.Id) return Unauthorized();
             User user = await dao.SetUser(mapper.Map(userDTO, userModel), userDTO.Timestamp);
             return Ok(mapper.Map<UserDTO>(user));
         }
@@ -77,7 +78,7 @@ namespace api.Controllers
         {
             User currentUser = await GetCurrentUserAsync();
             User user = await dao.GetUser(id);
-            if (currentUser.Role == "client" && currentUser.Id != user.Id) return Unauthorized();
+            if (currentUser.Role == Constants.CLIENT && currentUser.Id != user.Id) return Unauthorized();
             await dao.RemoveUser(user);
             return Ok();
         }

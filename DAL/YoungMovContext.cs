@@ -15,6 +15,7 @@ namespace DAL
         public YoungMovContext(DbContextOptions<YoungMovContext> options)
             : base(options)
         {
+            
         }
 
         public virtual DbSet<Car> Car { get; set; }
@@ -78,6 +79,8 @@ namespace DAL
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__car__owner__12C8C788");
             });
+
+            modelBuilder.Entity<Car>().HasMany(c => c.Carpooling).WithOne(c => c.CarNavigation).HasForeignKey(c => c.Car).OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Carpooling>(entity =>
             {

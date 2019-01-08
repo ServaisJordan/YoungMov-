@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using DAL;
 using Microsoft.AspNetCore.Identity;
 using Exceptions;
+using DTO;
 
 namespace api.Controllers
 {
@@ -33,10 +34,12 @@ namespace api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<CarpoolingApplicantDTO>> Put(int id, [FromBody] CarpoolingApplicantDTO carpoolingApplicantDTO) {
+        public async Task<ActionResult<CarpoolingApplicantDTO>> Put(int id, [FromBody] CarpoolingApplicantDTO carpoolingApplicantDTO)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             User user = await GetCurrentUserAsync();
             CarpoolingApplicant carpoolingApplicantModel = await dao.GetCarpoolingApplicant(id);
-            if (user.Role == "client" && user.Carpooling.SingleOrDefault(c => c.Id == carpoolingApplicantDTO.Carpooling) == null) return Unauthorized();
+            if (user.Role == Constants.ADMIN && user.Carpooling.SingleOrDefault(c => c.Id == carpoolingApplicantDTO.Carpooling) == null) return Unauthorized();
             CarpoolingApplicant carpoolingApplicant = await dao.SetCarpoolingApplicant(mapper.Map(carpoolingApplicantDTO, carpoolingApplicantModel));
             return Ok(mapper.Map<CarpoolingApplicantDTO>(carpoolingApplicant));
         }
@@ -44,12 +47,13 @@ namespace api.Controllers
         [HttpPost]
         public async Task<ActionResult<CarpoolingApplicantDTO>> Post([FromBody] CarpoolingApplicantDTO carpoolingApplicantDTO)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var user = await GetCurrentUserAsync();
-            if (user.Role == "client" && user.Id != carpoolingApplicantDTO.User) return Unauthorized();
-            if (user.Carpooling.SingleOrDefault(c => c.Id == carpoolingApplicantDTO.Carpooling) != null) 
-                throw new JoiningHisOwnCarpoolingException("unauthorized to join his own carpooling"); 
+            if (user.Role == Constants.CLIENT && user.Id != carpoolingApplicantDTO.User) return Unauthorized();
+            if (user.Carpooling.SingleOrDefault(c => c.Id == carpoolingApplicantDTO.Carpooling) != null)
+                throw new JoiningHisOwnCarpoolingException(user.UserName);
             Carpooling carpooling = await dao.GetCarpooling(carpoolingApplicantDTO.Carpooling);
-            if (carpooling.NbPlaces >= carpooling.CarpoolingApplicant.Count()) throw new TooMuchParticipantsException("too much participant");
+            if (carpooling.NbPlaces >= carpooling.CarpoolingApplicant.Count()) throw new TooMuchParticipantsException(carpooling.Id);
             CarpoolingApplicant carpoolingApplicant = await dao.AddCarpoolingApplicant(mapper.Map<CarpoolingApplicant>(carpoolingApplicantDTO));
             return Created("api/Cars/" + carpoolingApplicant.Id, mapper.Map<CarpoolingApplicantDTO>(carpoolingApplicant));
         }
@@ -59,7 +63,7 @@ namespace api.Controllers
         {
             CarpoolingApplicant carpoolingApplicant = await dao.GetCarpoolingApplicant(id);
             var user = await GetCurrentUserAsync();
-            if (user.Role == "client" && user.Id != carpoolingApplicant.User) return Unauthorized();
+            if (user.Role == Constants.CLIENT && user.Id != carpoolingApplicant.User) return Unauthorized();
             await dao.RemoveCarpoolingApplicant(carpoolingApplicant);
             return Ok();
         }

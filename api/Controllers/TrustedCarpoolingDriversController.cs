@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using DAL;
 using Microsoft.AspNetCore.Identity;
+using Exceptions;
+using DTO;
 
 namespace api.Controllers
 {
@@ -35,6 +37,11 @@ namespace api.Controllers
         [HttpPost]
         public async Task<ActionResult<TrustedCarpoolingDriverDTO>> Post([FromBody] TrustedCarpoolingDriverDTO trustedCarpoolingDriverDTO)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            User currentUser = await GetCurrentUserAsync();
+            if (currentUser.Id != trustedCarpoolingDriverDTO.User) return Unauthorized();
+            User carpooler = await userManager.FindByIdAsync(trustedCarpoolingDriverDTO.Carpooler);
+            if (carpooler.TrustedCarpoolingDriverCode == null) throw new NotATrustedCarpoolingDriver(carpooler.UserName);
             TrustedCarpoolingDriver trustedCarpoolingDriver = await dao.AddTrustedCarpoolingDriver(mapper.Map<TrustedCarpoolingDriver>(trustedCarpoolingDriverDTO));
             return Created("api/Cars/" + trustedCarpoolingDriver.Id, mapper.Map<TrustedCarpoolingDriverDTO>(trustedCarpoolingDriver));
         }
@@ -44,8 +51,8 @@ namespace api.Controllers
         {
             User user = await GetCurrentUserAsync();
             TrustedCarpoolingDriver trustedCarpoolingDriver = await dao.GetTrustedCarpoolingDriver(id);
-            if (user.UserName == "client" && user.Id == trustedCarpoolingDriver.User)
-            await dao.RemoveTrustedCarpoolingDriver(trustedCarpoolingDriver);
+            if (user.UserName == Constants.CLIENT && user.Id == trustedCarpoolingDriver.User)
+                await dao.RemoveTrustedCarpoolingDriver(trustedCarpoolingDriver);
             return Ok();
         }
     }

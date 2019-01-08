@@ -15,6 +15,8 @@ using System.IO;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Identity;
 using System;
+using Exceptions;
+using DTO;
 
 namespace api.Controllers
 {
@@ -41,6 +43,41 @@ namespace api.Controllers
             return await SavePhoto(file, false);
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ValidFacePhoto(string id, [FromBody] PhotoValidationModel photoValidationModel) {
+            User currentUser = await GetCurrentUserAsync();
+            if (currentUser.Role != Constants.ADMIN) return Unauthorized();
+            User user = await dao.GetUser(id);
+            if (user == null) return NotFound();
+            if (photoValidationModel.IsValid) {
+                if (user.FacePhotoFilename == null) throw new PhotoNotFoundException(user.UserName);
+                user.FacePhotoValidatedAt = DateTime.Now;
+                if (user.IdentityPieceValidatedAt != null) await dao.AttributeTrustedCarpoolingDriverCode(user);
+            } else {
+                user.FacePhotoFilename = null;
+                user.FacePhotoSentAt = null;
+            }
+            await dao.SetUser(user, user.Timestamp);
+            return Ok();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ValideIdentityPiecePhoto(string id, [FromBody] PhotoValidationModel photoValidationModel) {
+            User currentUser = await GetCurrentUserAsync();
+            if (currentUser.Role != Constants.ADMIN) return Unauthorized();
+            User user = await dao.GetUser(id);
+            if (user == null) return NotFound();
+            if (photoValidationModel.IsValid) {
+                if (user.IdentityPieceFilename == null) throw new PhotoNotFoundException(user.UserName);
+                user.IdentityPieceValidatedAt = DateTime.Now;
+                if (user.FacePhotoValidatedAt != null) await dao.AttributeTrustedCarpoolingDriverCode(user);
+            } else {
+                user.IdentityPieceFilename = null;
+                user.IdentityPieceSentAt = null;
+            }
+            await dao.SetUser(user, user.Timestamp);
+            return Ok();
+        }
 
         private async Task<IActionResult> SavePhoto(IFormFile file, Boolean isFacePhoto = true)
         {

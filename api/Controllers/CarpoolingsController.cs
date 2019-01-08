@@ -15,6 +15,7 @@ using DAO;
 using DAL;
 using Microsoft.AspNetCore.Identity;
 using Exceptions;
+using DTO;
 
 
 namespace api.Controllers
@@ -51,7 +52,9 @@ namespace api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var user = await GetCurrentUserAsync();
-            if (user.Role == "client" && carpoolingDTO.Creator != user.Id) return Unauthorized();
+            if (user.Role == Constants.CLIENT && carpoolingDTO.Creator != user.Id) return Unauthorized();
+            if (DateTime.Compare(carpoolingDTO.DateStart, carpoolingDTO.DateEnd) > 0) 
+                throw new DateStartLaterThanDateEndException(carpoolingDTO.DateStart, carpoolingDTO.DateEnd); 
             Carpooling carpooling = await dao.AddCarpooling(mapper.Map<Carpooling>(carpoolingDTO));
             return Created("api/Users/" + carpooling.Id, mapper.Map<CarpoolingDTO>(carpooling));
         }
@@ -62,10 +65,12 @@ namespace api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var user = await GetCurrentUserAsync();
-            if (user.Car.SingleOrDefault(c => c.Id == carpoolingDTO.Car) == null) throw new NotOwnerException(user.UserName+"is not the owner of this car");
+            Car car = user.Car.SingleOrDefault(c => c.Id == carpoolingDTO.Car);
+            if (car == null) throw new NotOwnerException(user.UserName);
+            if (car.ValidatedAt == null) throw new NotValidatedException(car.Id);
             Carpooling carpoolingModel = await dao.GetCarpooling(id);
             if (carpoolingModel == null) return NotFound();
-            if (user.Role == "client" && carpoolingModel.Creator != user.Id) return Unauthorized();
+            if (user.Role == Constants.CLIENT && carpoolingModel.Creator != user.Id) return Unauthorized();
             Carpooling carpooling = await dao.SetCarpooling(mapper.Map(carpoolingDTO, carpoolingModel), carpoolingDTO.Timestamp);
             return Ok(mapper.Map<CarpoolingDTO>(carpooling));
         }
@@ -76,7 +81,7 @@ namespace api.Controllers
         {
             Carpooling carpooling = await dao.GetCarpooling(id);
             var user = await GetCurrentUserAsync();
-            if (user.Role == "client" && carpooling.Creator != user.Id) return Unauthorized();
+            if (user.Role == Constants.CLIENT && carpooling.Creator != user.Id) return Unauthorized();
             await dao.RemoveCarpooling(carpooling);
             return Ok();
         }

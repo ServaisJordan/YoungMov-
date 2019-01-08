@@ -11856,11 +11856,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\HP\\Desktop\\apiSmartCity\\api\\api.csproj",
+      "projectUniqueName": "c:\\Users\\HP\\Desktop\\apiSmartCity\\api\\api.csproj",
       "projectName": "api",
-      "projectPath": "C:\\Users\\HP\\Desktop\\apiSmartCity\\api\\api.csproj",
+      "projectPath": "c:\\Users\\HP\\Desktop\\apiSmartCity\\api\\api.csproj",
       "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\HP\\Desktop\\apiSmartCity\\api\\obj\\",
+      "outputPath": "c:\\Users\\HP\\Desktop\\apiSmartCity\\api\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -11879,17 +11879,17 @@
       "frameworks": {
         "netcoreapp2.1": {
           "projectReferences": {
-            "C:\\Users\\HP\\Desktop\\apiSmartCity\\DAL\\DAL.csproj": {
-              "projectPath": "C:\\Users\\HP\\Desktop\\apiSmartCity\\DAL\\DAL.csproj"
+            "c:\\Users\\HP\\Desktop\\apiSmartCity\\DAL\\DAL.csproj": {
+              "projectPath": "c:\\Users\\HP\\Desktop\\apiSmartCity\\DAL\\DAL.csproj"
             },
-            "C:\\Users\\HP\\Desktop\\apiSmartCity\\DAO\\DAO.csproj": {
-              "projectPath": "C:\\Users\\HP\\Desktop\\apiSmartCity\\DAO\\DAO.csproj"
+            "c:\\Users\\HP\\Desktop\\apiSmartCity\\DAO\\DAO.csproj": {
+              "projectPath": "c:\\Users\\HP\\Desktop\\apiSmartCity\\DAO\\DAO.csproj"
             },
-            "C:\\Users\\HP\\Desktop\\apiSmartCity\\DTO\\DTO.csproj": {
-              "projectPath": "C:\\Users\\HP\\Desktop\\apiSmartCity\\DTO\\DTO.csproj"
+            "c:\\Users\\HP\\Desktop\\apiSmartCity\\DTO\\DTO.csproj": {
+              "projectPath": "c:\\Users\\HP\\Desktop\\apiSmartCity\\DTO\\DTO.csproj"
             },
-            "C:\\Users\\HP\\Desktop\\apiSmartCity\\model\\model.csproj": {
-              "projectPath": "C:\\Users\\HP\\Desktop\\apiSmartCity\\model\\model.csproj"
+            "c:\\Users\\HP\\Desktop\\apiSmartCity\\model\\model.csproj": {
+              "projectPath": "c:\\Users\\HP\\Desktop\\apiSmartCity\\model\\model.csproj"
             }
           }
         }

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using DAL;
 using Microsoft.AspNetCore.Identity;
+using DTO;
 
 namespace api.Controllers
 {
@@ -26,7 +27,7 @@ namespace api.Controllers
         public async Task<ActionResult<IEnumerable<PrivateMessageDTO>>> Get(int pageIndex = 0, int? pageSize = null)
         {
             User user = await GetCurrentUserAsync();
-            if (user.Role != "client") return Unauthorized();
+            if (user.Role != Constants.ADMIN) return Unauthorized();
             IEnumerable<PrivateMessage> privateMessages = await dao.GetPrivateMessages(pageIndex, pageSize);
             IEnumerable<PrivateMessageDTO> privateMessageDTO = privateMessages.Select(c => mapper.Map<PrivateMessageDTO>(c));
             return Ok(privateMessageDTO);
@@ -47,6 +48,7 @@ namespace api.Controllers
         [HttpPost]
         public async Task<ActionResult<PrivateMessageDTO>> Post([FromBody] PrivateMessageDTO privateMessageDTO)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             User user = await GetCurrentUserAsync();
             if (user.Id != privateMessageDTO.Creator) return Unauthorized();
             PrivateMessage privateMessage = await dao.AddPrivateMessage(mapper.Map<PrivateMessage>(privateMessageDTO));
@@ -57,6 +59,7 @@ namespace api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<PrivateMessageDTO>> Put(int id, [FromBody] PrivateMessageDTO PrivateMessageDTO)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             User user = await GetCurrentUserAsync();
             PrivateMessage privateMessageModel = await dao.GetPrivateMessage(id);
             if (privateMessageModel == null) return NotFound();

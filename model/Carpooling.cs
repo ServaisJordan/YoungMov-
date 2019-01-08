@@ -16,8 +16,8 @@ namespace model
         public decimal PlacePrice { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public DateTime? DateStart { get; set; }
-        public DateTime? DateEnd { get; set; }
+        public DateTime DateStart { get; set; }
+        public DateTime DateEnd { get; set; }
         public string DestinationFrom { get; set; }
         public string DestinationTo { get; set; }
         public string LocalityFrom { get; set; }

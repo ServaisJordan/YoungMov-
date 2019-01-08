@@ -4,9 +4,7 @@ namespace Exceptions
 {
     public class NotOwnerException : BusinessException
     {
-        public string ErrorMessage { get; set; }
-        public NotOwnerException(string errorMessage) : base(errorMessage) {
-            ErrorMessage = errorMessage;
+        public NotOwnerException(string userName) : base(userName+" is not the owner of this car") {
         }
     }
 }

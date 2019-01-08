@@ -48,6 +48,15 @@ namespace DAL
         }
 
 
+        public async Task<User> GetUserByUserName(string userName) {
+            return await IncludeQuery().FirstOrDefaultAsync(u => u.UserName == userName);
+        }
+
+        public async Task<User> GetUserByTrustedCarpoolingCode(string trustedCarpoolingDriverCode) {
+            return await context.User.FirstOrDefaultAsync(u => u.TrustedCarpoolingDriverCode == trustedCarpoolingDriverCode);
+        }
+
+
         public async Task<User> AddUser(User user) {
             await context.User.AddAsync(user);
             await context.SaveChangesAsync();
@@ -71,6 +80,16 @@ namespace DAL
             
             context.User.Remove(user);
             await context.SaveChangesAsync();
+        }
+
+        public async Task AttributeTrustedCarpoolingDriverCode(User user) {
+            IEnumerable<User> users = await GetUsers(null, 0, null);
+            int i = 0;
+            while (users.SingleOrDefault(u => int.Parse(u.TrustedCarpoolingDriverCode) == i) != null) {
+                i++;
+            }
+            user.TrustedCarpoolingDriverCode = i.ToString();
+            await SetUser(user, user.Timestamp);
         }
         #endregion User
 

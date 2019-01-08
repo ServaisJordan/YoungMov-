@@ -12,6 +12,8 @@ using DAL;
 using Microsoft.AspNetCore.Identity;
 using System.Linq;
 using AutoMapper;
+using DTO;
+using Exceptions;
 
 namespace api.Controllers
 {
@@ -35,7 +37,8 @@ namespace api.Controllers
         [HttpPost]
         public async Task<ActionResult> Login([FromBody] LoginModel loginModel)
         {
-
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (loginModel.Role != Constants.CLIENT && loginModel.Role != Constants.ADMIN) throw new UnknowRoleException(loginModel.Role);
             var result = await signInManager.PasswordSignInAsync(loginModel.UserName, loginModel.Password, false, false);
             if (result.Succeeded)
             {

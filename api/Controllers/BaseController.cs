@@ -40,17 +40,7 @@ namespace api.Controllers
             Claim userNameClaim = this.HttpContext.User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier);
             if (userNameClaim == null)
                 throw new Exception("an error has occure with the token");
-            return await userManager.FindByNameAsync(userNameClaim.Value);
-        }
-
-        [NonAction]
-        public bool IsInRole(string roleName)
-        {
-
-            var view = this.HttpContext.User.Claims;
-            Claim roleClaim = view.FirstOrDefault(claim => claim.Type == "Roles" && claim.Value == roleName);
-
-            return roleClaim != null;
+            return await dao.GetUserByUserName(userNameClaim.Value);
         }
     }
 }

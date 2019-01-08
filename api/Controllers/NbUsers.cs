@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using DAL;
 using Microsoft.AspNetCore.Identity;
 using model;
+using DTO;
 
 namespace api.Controllers
 {
@@ -23,7 +24,7 @@ namespace api.Controllers
         public async Task<ActionResult<int>> Get(DateTime? date = null, char? gender = null)
         {
             User user = await GetCurrentUserAsync();
-            if (user.Role != "backoffice") return Unauthorized();
+            if (user.Role != Constants.ADMIN) return Unauthorized();
             return Ok(await dao.GetNumberOfUsers(date, gender));
         }
     }

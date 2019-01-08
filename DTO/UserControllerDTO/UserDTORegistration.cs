@@ -8,9 +8,9 @@ namespace DTO.UserControllerDTO
 {
     public class UserDTORegistration : UserGlobal
     {
-        [Required]
+        [Required(ErrorMessage = "role is missing")]
         public string Role { get; set; }
-        [Required]
+        [Required(ErrorMessage = "password is missing")]
         public string Password { get; set; }
     }
 }

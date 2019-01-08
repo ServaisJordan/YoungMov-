@@ -10,11 +10,13 @@ namespace DAO
         #region User
         Task<IEnumerable<User>> GetUsers(int? pageSize, int pageIndex, string filter);
         Task<User> GetUser(string id);
-        //Task<User> GetUser(string userName);
+        Task<User> GetUserByUserName(string userName);
         Task<User> GetUser(string userName, string password, string role);
         Task<User> AddUser(User user);
         Task<User> SetUser(User user, byte[] timestamp);
         Task RemoveUser(User user);
+        Task AttributeTrustedCarpoolingDriverCode(User user);
+        
         #endregion
 
         #region Carpooling
